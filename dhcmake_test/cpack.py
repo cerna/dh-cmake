@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 
 from dhcmake import common, cpack
-from dhcmake_test import DHCMakeTestCaseBase
+from dhcmake_test import RunCMakeTestCaseBase
 
 
 CMAKELISTS_TXT = \
@@ -38,11 +38,18 @@ endforeach()
 """
 
 
-class DHCPackTestCase(DHCMakeTestCaseBase):
-    def setUp(self):
-        self.dhcpack = cpack.DHCPack()
+class DHCPackTestCase(RunCMakeTestCaseBase):
+    def make_sub_lib(self, libname):
+        self.make_src_dir(libname)
+        self.write_src_file(os.path.join(libname, "CMakeLists.txt"),
+                            "declare_lib({0})".format(libname))
+        self.write_src_file(os.path.join(libname, libname + ".c"), "")
+        self.write_src_file(os.path.join(libname, libname + ".h"), "")
 
-        self.src_dir = tempfile.TemporaryDirectory()
+    def setUp(self):
+        super().setUp()
+
+        self.dhcpack = cpack.DHCPack()
 
         self.write_src_file("CMakeLists.txt", CMAKELISTS_TXT)
         self.write_src_file("dhcmake-test.c", "")
@@ -73,10 +80,9 @@ class DHCPackTestCase(DHCMakeTestCaseBase):
         self.install_lib_dir.cleanup()
         self.install_all_dir.cleanup()
         self.build_dir.cleanup()
-        self.src_dir.cleanup()
 
+        super().tearDown()
 
-class DHCPackDoCMakeInstallTestCase(DHCPackTestCase):
     def test_cmake_install_all(self):
         self.dhcpack.parse_args([])
 

@@ -32,20 +32,6 @@ class VolatileNamedTemporaryFile:
 
 
 class DHCMakeTestCaseBase(TestCase):
-    def write_src_file(self, filename, contents):
-        with open(os.path.join(self.src_dir.name, filename), "w") as f:
-            f.write(contents)
-
-    def make_src_dir(self, filename):
-        os.mkdir(os.path.join(self.src_dir.name, filename))
-
-    def make_sub_lib(self, libname):
-        self.make_src_dir(libname)
-        self.write_src_file(os.path.join(libname, "CMakeLists.txt"),
-                            "declare_lib({0})".format(libname))
-        self.write_src_file(os.path.join(libname, libname + ".c"), "")
-        self.write_src_file(os.path.join(libname, libname + ".h"), "")
-
     def assertFileExists(self, path):
         self.assertTrue(os.path.exists(
             path), "File '{0}' does not exist".format(path))
@@ -87,8 +73,24 @@ class VolatileNamedTemporaryFileTestCase(DHCMakeTestCaseBase):
         self.assertVolatileFileNotExists(f.name)
 
 
-class DHCMakeBaseTestCase(DHCMakeTestCaseBase):
+class RunCMakeTestCaseBase(DHCMakeTestCaseBase):
     def setUp(self):
+        self.src_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.src_dir.cleanup()
+
+    def write_src_file(self, filename, contents):
+        with open(os.path.join(self.src_dir.name, filename), "w") as f:
+            f.write(contents)
+
+    def make_src_dir(self, filename):
+        os.mkdir(os.path.join(self.src_dir.name, filename))
+
+
+class DHCMakeBaseTestCase(RunCMakeTestCaseBase):
+    def setUp(self):
+        super().setUp()
         self.dhcmake_base = common.DHCMakeBase()
 
     def test_do_cmd(self):
@@ -104,3 +106,6 @@ class DHCMakeBaseTestCase(DHCMakeTestCaseBase):
         with VolatileNamedTemporaryFile() as f:
             self.dhcmake_base.do_cmd(["rm", f.name])
             self.assertFileExists(f.name)
+
+    def test_get_packages_default(self):
+        pass
