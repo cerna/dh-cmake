@@ -13,18 +13,28 @@ CMAKELISTS_TXT = \
 r"""cmake_minimum_required(VERSION 3.5)
 project(dhcmake-test C)
 
+include(CPackExternal)
+
 macro(declare_lib LIBNAME)
   add_library(${LIBNAME} SHARED "${LIBNAME}.c")
   set_property(TARGET ${LIBNAME} PROPERTY PUBLIC_HEADER "${LIBNAME}.h")
   install(TARGETS ${LIBNAME}
-    LIBRARY DESTINATION lib COMPONENT Libraries
-    PUBLIC_HEADER DESTINATION include COMPONENT Development
+    LIBRARY DESTINATION lib COMPONENT ${LIBNAME}-Libraries
+    PUBLIC_HEADER DESTINATION include COMPONENT ${LIBNAME}-Development
   )
 endmacro()
 
 declare_lib(dhcmake-test)
 add_subdirectory(dhcmake-test-lib1)
 add_subdirectory(dhcmake-test-lib2)
+
+cpack_add_component_group(Libraries)
+cpack_add_component_group(Development)
+
+foreach(_n dhcmake-test dhcmake-test-lib1 dhcmake-test-lib2)
+  cpack_add_component(${_n}-Libraries GROUP Libraries)
+  cpack_add_component(${_n}-Development GROUP Development)
+endforeach()
 """
 
 
@@ -67,7 +77,7 @@ class DHCPackTestCase(DHCMakeTestCaseBase):
 
 
 class DHCPackDoCMakeInstallTestCase(DHCPackTestCase):
-    def test_install_all(self):
+    def test_cmake_install_all(self):
         self.dhcpack.parse_args([])
 
         self.dhcpack.do_cmake_install(self.build_dir.name,
@@ -88,7 +98,7 @@ class DHCPackDoCMakeInstallTestCase(DHCPackTestCase):
 
         self.assertFileTreeEqual(expected_files, self.install_all_dir.name)
 
-    def test_install_subdirectory(self):
+    def test_cmake_install_subdirectory(self):
         self.dhcpack.parse_args([])
 
         self.dhcpack.do_cmake_install(
@@ -106,13 +116,50 @@ class DHCPackDoCMakeInstallTestCase(DHCPackTestCase):
 
         self.assertFileTreeEqual(expected_files, self.install_all_dir.name)
 
-    def test_install_one_component(self):
+    def test_cmake_install_one_component(self):
         self.dhcpack.parse_args([])
 
         self.dhcpack.do_cmake_install(self.build_dir.name,
                                       self.install_dev_dir.name,
-                                      component="Development",
+                                      component="dhcmake-test-Development",
                                       suppress_output=True)
+
+        expected_files = {
+            "usr",
+            "usr/include",
+            "usr/include/dhcmake-test.h",
+        }
+
+        self.assertFileTreeEqual(expected_files, self.install_dev_dir.name)
+
+    def test_cpack_external_install_all(self):
+        self.dhcpack.parse_args([])
+
+        self.dhcpack.do_cpack_external_install(self.build_dir.name,
+                                               self.install_all_dir.name,
+                                               suppress_output=True)
+
+        expected_files = {
+            "usr",
+            "usr/lib",
+            "usr/lib/libdhcmake-test.so",
+            "usr/lib/libdhcmake-test-lib1.so",
+            "usr/lib/libdhcmake-test-lib2.so",
+            "usr/include",
+            "usr/include/dhcmake-test.h",
+            "usr/include/dhcmake-test-lib1.h",
+            "usr/include/dhcmake-test-lib2.h",
+        }
+
+        self.assertFileTreeEqual(expected_files, self.install_all_dir.name)
+
+    def test_cpack_external_install_one_component(self):
+        self.dhcpack.parse_args([])
+
+        self.dhcpack.do_cpack_external_install(self.build_dir.name,
+                                               self.install_dev_dir.name,
+                                               component_group="Development",
+                                               suppress_output=True)
 
         expected_files = {
             "usr",
