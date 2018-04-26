@@ -4,25 +4,7 @@
 import os.path
 import shutil
 import tempfile
-from unittest import TestCase, skip
-
-from dhcmake import common
-import dhcmake_test
-
-
-DEBIAN_CONTROL = \
-r"""Source: libdhcmake-test
-Maintainer: Kitware Debian Maintainers <debian@kitware.com>
-
-Package: libdhcmake-test
-Architecture: any
-
-Package: libdhcmake-test-dev
-Architecture: any
-
-Package: libdhcmake-test-doc
-Architecture: all
-"""
+from unittest import TestCase
 
 
 class VolatileNamedTemporaryFile:
@@ -89,7 +71,12 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         shutil.copytree(debian_pkg_dir, self.src_dir)
 
+        self.old_cwd = os.getcwd()
+        os.chdir(self.src_dir)
+
     def tearDown(self):
+        os.chdir(self.old_cwd)
+
         self.tmp_dir.cleanup()
 
     def open(self, filename, *args, **kwargs):
@@ -107,100 +94,3 @@ class VolatileNamedTemporaryFileTestCase(KWTestCaseBase):
         with VolatileNamedTemporaryFile() as f:
             os.unlink(f.name)
         self.assertVolatileFileNotExists(f.name)
-
-
-class RunCMakeTestCaseBase(KWTestCaseBase):
-    def setUp(self):
-        self.src_dir = tempfile.TemporaryDirectory()
-
-    def tearDown(self):
-        self.src_dir.cleanup()
-
-    def write_src_file(self, filename, contents):
-        with open(os.path.join(self.src_dir.name, filename), "w") as f:
-            f.write(contents)
-
-    def make_src_dir(self, filename):
-        os.mkdir(os.path.join(self.src_dir.name, filename))
-
-
-class DHCMakeBaseTestCase(RunCMakeTestCaseBase):
-    def setUp(self):
-        super().setUp()
-        self.dhcmake_base = common.DHCMakeBase()
-
-        self.make_src_dir("debian")
-
-        self.write_src_file("debian/control", DEBIAN_CONTROL)
-
-        self.old_cwd = os.getcwd()
-        os.chdir(self.src_dir.name)
-
-    def tearDown(self):
-        os.chdir(self.old_cwd)
-        super().tearDown()
-
-    def check_packages(self, expected_packages):
-        self.assertEqual(expected_packages, set(self.dhcmake_base.get_packages()))
-
-    def test_do_cmd(self):
-        self.dhcmake_base.parse_args([])
-
-        with VolatileNamedTemporaryFile() as f:
-            self.dhcmake_base.do_cmd(["rm", f.name])
-            self.assertVolatileFileNotExists(f.name)
-
-    def test_do_cmd_no_act(self):
-        self.dhcmake_base.parse_args(["--no-act"])
-
-        with VolatileNamedTemporaryFile() as f:
-            self.dhcmake_base.do_cmd(["rm", f.name])
-            self.assertFileExists(f.name)
-
-    @skip("Not implemented yet")
-    def test_get_packages_default(self):
-        self.dhcmake_base.parse_args([])
-
-        self.check_packages({
-            "libdhcmake-test",
-            "libdhcmake-test-dev",
-            "libdhcmake-test-doc",
-        })
-
-    @skip("Not implemented yet")
-    def test_get_packages_whitelist_short(self):
-        self.dhcmake_base.parse_args(["-plibdhcmake-test-dev",
-                                      "-plibdhcmake-test-doc"])
-
-        self.check_packages({
-            "libdhcmake-test-dev",
-            "libdhcmake-test-doc",
-        })
-
-    @skip("Not implemented yet")
-    def test_get_packages_whitelist_long(self):
-        self.dhcmake_base.parse_args(["--package", "libdhcmake-test-dev",
-                                      "--package", "libdhcmake-test-doc"])
-
-        self.check_packages({
-            "libdhcmake-test-dev",
-            "libdhcmake-test-doc",
-        })
-
-    @skip("Not implemented yet")
-    def test_get_packages_blacklist_short(self):
-        self.dhcmake_base.parse_args(["-Nlibdhcmake-test-dev",
-                                      "-Nlibdhcmake-test-doc"])
-
-        self.check_packages({
-            "libdhcmake-test",
-        })
-
-    @skip("Not implemented yet")
-    def test_get_packages_blacklist_long(self):
-        self.dhcmake_base.parse_args(["--no-package", "libdhcmake-test-dev",
-                                      "--no-package", "libdhcmake-test-doc"])
-
-        self.check_packages({
-            "libdhcmake-test",
-        })
