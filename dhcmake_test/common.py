@@ -141,3 +141,46 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
                 "libdh-cmake-test-dev","cmake-components"
             )
         )
+
+    def test_build_directory_default(self):
+        self.dhcmake_base.parse_args([])
+
+        self.assertEqual(
+            "obj-" + common.dpkg_architecture()["DEB_HOST_GNU_TYPE"],
+            self.dhcmake_base.get_build_directory())
+
+    def test_build_directory_short(self):
+        self.dhcmake_base.parse_args(["-B", "debian/build"])
+
+        self.assertEqual("debian/build",
+                         self.dhcmake_base.get_build_directory())
+
+    def test_build_directory_long(self):
+        self.dhcmake_base.parse_args(["--builddirectory", "debian/build"])
+
+        self.assertEqual("debian/build",
+                         self.dhcmake_base.get_build_directory())
+
+    def test_tmpdir_default(self):
+        self.dhcmake_base.parse_args([])
+
+        self.assertEqual("debian/libdh-cmake-test",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test"))
+        self.assertEqual("debian/libdh-cmake-test-dev",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test-dev"))
+
+    def test_tmpdir_short(self):
+        self.dhcmake_base.parse_args(["-P", "debian/tmpdir"])
+
+        self.assertEqual("debian/tmpdir",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test"))
+        self.assertEqual("debian/tmpdir",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test-dev"))
+
+    def test_tmpdir_long(self):
+        self.dhcmake_base.parse_args(["--tmpdir=debian/tmpdir"])
+
+        self.assertEqual("debian/tmpdir",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test"))
+        self.assertEqual("debian/tmpdir",
+                         self.dhcmake_base.get_tmpdir("libdh-cmake-test-dev"))

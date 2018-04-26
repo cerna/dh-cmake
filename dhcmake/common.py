@@ -93,8 +93,7 @@ class DHCMakeBase:
         parser.add_argument(
             "-B", "--builddirectory", action="store",
             help="Build directory for out of source building",
-            default=os.path.join(os.getcwd(), "obj-" \
-                + dpkg_architecture()["DEB_HOST_GNU_TYPE"]))
+            default="obj-" + dpkg_architecture()["DEB_HOST_GNU_TYPE"])
 
         self._parse_args(parser, args, False)
 
@@ -149,3 +148,12 @@ class DHCMakeBase:
             return os.path.join("debian", extension)
         else:
             return os.path.join("debian", package + "." + extension)
+
+    def get_build_directory(self):
+        return self.options.builddirectory
+
+    def get_tmpdir(self, package):
+        if self.options.tmpdir:
+            return self.options.tmpdir
+        else:
+            return os.path.join("debian", package)
