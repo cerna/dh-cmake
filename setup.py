@@ -16,6 +16,6 @@ setup( \
     packages=["dhcmake"],
     install_requires=["python-debian"],
     entry_points={
-        "console_scripts": ["dh_cpack=dhcmake.cpack.main"],
+        "console_scripts": ["dh_cmake_install=dhcmake.cmake.install"],
     },
 )

@@ -79,6 +79,11 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         self.tmp_dir.cleanup()
 
+    def make_directory_in_tmp(self, name):
+        path = os.path.join(self.tmp_dir.name, name)
+        os.mkdir(path)
+        return path
+
     def open(self, filename, *args, **kwargs):
         path = os.path.join(self.src_dir, filename)
         return open(path, *args, **kwargs)
