@@ -29,7 +29,6 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
             self.dhcmake_base.do_cmd(["rm", f.name])
             self.assertFileExists(f.name)
 
-    @skip("Not implemented yet")
     def test_get_packages_default(self):
         self.dhcmake_base.parse_args([])
 
@@ -39,7 +38,6 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test-doc",
         })
 
-    @skip("Not implemented yet")
     def test_get_packages_whitelist_short(self):
         self.dhcmake_base.parse_args(["-plibdh-cmake-test-dev",
                                       "-plibdh-cmake-test-doc"])
@@ -49,7 +47,6 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test-doc",
         })
 
-    @skip("Not implemented yet")
     def test_get_packages_whitelist_long(self):
         self.dhcmake_base.parse_args(["--package", "libdh-cmake-test-dev",
                                       "--package", "libdh-cmake-test-doc"])
@@ -59,7 +56,6 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test-doc",
         })
 
-    @skip("Not implemented yet")
     def test_get_packages_blacklist_short(self):
         self.dhcmake_base.parse_args(["-Nlibdh-cmake-test-dev",
                                       "-Nlibdh-cmake-test-doc"])
@@ -68,11 +64,48 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test",
         })
 
-    @skip("Not implemented yet")
     def test_get_packages_blacklist_long(self):
         self.dhcmake_base.parse_args(["--no-package", "libdh-cmake-test-dev",
                                       "--no-package", "libdh-cmake-test-doc"])
 
         self.check_packages({
             "libdh-cmake-test",
+        })
+
+    def test_get_packages_arch_short(self):
+        self.dhcmake_base.parse_args(["-a"])
+
+        self.check_packages({
+            "libdh-cmake-test",
+            "libdh-cmake-test-dev",
+        })
+
+    def test_get_packages_arch_long(self):
+        self.dhcmake_base.parse_args(["--arch"])
+
+        self.check_packages({
+            "libdh-cmake-test",
+            "libdh-cmake-test-dev",
+        })
+
+    def test_get_packages_arch_deprecated(self):
+        self.dhcmake_base.parse_args(["-s"])
+
+        self.check_packages({
+            "libdh-cmake-test",
+            "libdh-cmake-test-dev",
+        })
+
+    def test_get_packages_indep_short(self):
+        self.dhcmake_base.parse_args(["-i"])
+
+        self.check_packages({
+            "libdh-cmake-test-doc",
+        })
+
+    def test_get_packages_indep_long(self):
+        self.dhcmake_base.parse_args(["--indep"])
+
+        self.check_packages({
+            "libdh-cmake-test-doc",
         })

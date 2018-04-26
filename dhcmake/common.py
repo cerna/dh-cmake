@@ -2,10 +2,11 @@
 # See top-level LICENSE file for license information.
 
 import argparse
-import debian.deb822
 import os.path
 import subprocess
 import sys
+
+from dhcmake import deb822
 
 
 _dpkg_architecture_values = None
@@ -38,6 +39,7 @@ def format_arg_for_print(arg):
 class DHCMakeBase:
     def __init__(self):
         self.options = argparse.Namespace()
+        self.options.type = "both"
 
     def _parse_args(self, parser, args, known):
         if known:
@@ -51,7 +53,6 @@ class DHCMakeBase:
             get_options(parser, options, self.options, True)
 
     def parse_args(self, args=None):
-        ns = argparse.Namespace()
         parser = argparse.ArgumentParser()
 
         # Required arguments
@@ -61,11 +62,11 @@ class DHCMakeBase:
             "--no-act", action="store_true",
             help="Dry run (don't actually do anything)")
         parser.add_argument(
-            "-a", "-s", "--arch", action="store_true",
-            help="Act on all architecture dependent packages")
+            "-a", "-s", "--arch", action="store_const", const="arch",
+            dest="type", help="Act on all architecture dependent packages")
         parser.add_argument(
-            "-i", "--indep", action="store_true",
-            help="Act on all architecture independent packages")
+            "-i", "--indep", action="store_const", const="indep",
+            dest="type", help="Act on all architecture independent packages")
         parser.add_argument(
             "-p", "--package", action="append",
             help="Act on a specific package or set of packages")
@@ -111,7 +112,25 @@ class DHCMakeBase:
 
     def get_packages(self):
         with open("debian/control", "r") as f:
-            control_iter = debian.deb822.Deb822.iter_paragraphs(f)
-            source_paragraph = next(control_iter)
+            source, packages = deb822.read_control(f)
 
-            pass
+        result = []
+
+        for p in packages:
+            name = p["package"]
+            if self.options.package:
+                if name in self.options.package:
+                    result.append(name)
+            elif self.options.no_package:
+                if name not in self.options.no_package:
+                    result.append(name)
+            elif self.options.type == "indep":
+                if p["architecture"] == "all":
+                    result.append(name)
+            elif self.options.type == "arch":
+                if p["architecture"] == "any":
+                    result.append(name)
+            elif self.options.type == "both":
+                result.append(name)
+
+        return result
