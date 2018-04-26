@@ -142,7 +142,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                        check=True)
 
-        self.dhcmake.run()
+        self.dhcmake.install()
 
     def test_dh_cmake_install_default(self):
         self.do_dh_cmake_install([])

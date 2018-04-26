@@ -50,7 +50,7 @@ class DHCMakeBase:
         if self.options.options:
             options = self.options.options
             self.options.options = []
-            get_options(parser, options, self.options, True)
+            self._parse_args(parser, options, True)
 
     def parse_args(self, args=None):
         parser = argparse.ArgumentParser()

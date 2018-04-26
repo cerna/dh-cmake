@@ -184,3 +184,8 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
                          self.dhcmake_base.get_tmpdir("libdh-cmake-test"))
         self.assertEqual("debian/tmpdir",
                          self.dhcmake_base.get_tmpdir("libdh-cmake-test-dev"))
+
+    def test_o_flag(self):
+        self.dhcmake_base.parse_args(["-O=-v"])
+
+        self.assertTrue(self.dhcmake_base.options.verbose)

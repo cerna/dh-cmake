@@ -33,8 +33,14 @@ class DHCMake(common.DHCMakeBase):
         env["DESTDIR"] = destdir
         self.do_cmd(args, env=env, suppress_output=suppress_output)
 
-    def run(self):
+    def install(self):
         for p in self.get_packages():
             for c in self.get_cmake_components(p):
                 self.do_cmake_install(self.get_build_directory(),
                                       self.get_tmpdir(p), c)
+
+
+def install():
+    dhcmake = DHCMake()
+    dhcmake.parse_args()
+    dhcmake.install()
