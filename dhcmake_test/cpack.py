@@ -13,7 +13,7 @@ CMAKELISTS_TXT = \
 r"""cmake_minimum_required(VERSION 3.5)
 project(dhcmake-test C)
 
-include(CPackExternal)
+include(CPack)
 
 macro(declare_lib LIBNAME)
   add_library(${LIBNAME} SHARED "${LIBNAME}.c")
@@ -134,45 +134,6 @@ class DHCPackTestCase(RunCMakeTestCaseBase):
             "usr",
             "usr/include",
             "usr/include/dhcmake-test.h",
-        }
-
-        self.assertFileTreeEqual(expected_files, self.install_dev_dir.name)
-
-    def test_cpack_external_install_all(self):
-        self.dhcpack.parse_args([])
-
-        self.dhcpack.do_cpack_external_install(self.build_dir.name,
-                                               self.install_all_dir.name,
-                                               suppress_output=True)
-
-        expected_files = {
-            "usr",
-            "usr/lib",
-            "usr/lib/libdhcmake-test.so",
-            "usr/lib/libdhcmake-test-lib1.so",
-            "usr/lib/libdhcmake-test-lib2.so",
-            "usr/include",
-            "usr/include/dhcmake-test.h",
-            "usr/include/dhcmake-test-lib1.h",
-            "usr/include/dhcmake-test-lib2.h",
-        }
-
-        self.assertFileTreeEqual(expected_files, self.install_all_dir.name)
-
-    def test_cpack_external_install_one_component(self):
-        self.dhcpack.parse_args([])
-
-        self.dhcpack.do_cpack_external_install(self.build_dir.name,
-                                               self.install_dev_dir.name,
-                                               component_group="Development",
-                                               suppress_output=True)
-
-        expected_files = {
-            "usr",
-            "usr/include",
-            "usr/include/dhcmake-test.h",
-            "usr/include/dhcmake-test-lib1.h",
-            "usr/include/dhcmake-test-lib2.h",
         }
 
         self.assertFileTreeEqual(expected_files, self.install_dev_dir.name)

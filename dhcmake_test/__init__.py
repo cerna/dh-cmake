@@ -136,9 +136,7 @@ class DHCMakeBaseTestCase(RunCMakeTestCaseBase):
             self.dhcmake_base.do_cmd(["rm", f.name])
             self.assertFileExists(f.name)
 
-
-@skip("Not implemented yet")
-class GetPackagesTestCase(DHCMakeBaseTestCase):
+    @skip("Not implemented yet")
     def test_get_packages_default(self):
         self.dhcmake_base.parse_args([])
 
@@ -148,6 +146,7 @@ class GetPackagesTestCase(DHCMakeBaseTestCase):
             "libdhcmake-test-doc",
         })
 
+    @skip("Not implemented yet")
     def test_get_packages_whitelist_short(self):
         self.dhcmake_base.parse_args(["-plibdhcmake-test-dev",
                                       "-plibdhcmake-test-doc"])
@@ -157,6 +156,7 @@ class GetPackagesTestCase(DHCMakeBaseTestCase):
             "libdhcmake-test-doc",
         })
 
+    @skip("Not implemented yet")
     def test_get_packages_whitelist_long(self):
         self.dhcmake_base.parse_args(["--package", "libdhcmake-test-dev",
                                       "--package", "libdhcmake-test-doc"])
@@ -166,6 +166,7 @@ class GetPackagesTestCase(DHCMakeBaseTestCase):
             "libdhcmake-test-doc",
         })
 
+    @skip("Not implemented yet")
     def test_get_packages_blacklist_short(self):
         self.dhcmake_base.parse_args(["-Nlibdhcmake-test-dev",
                                       "-Nlibdhcmake-test-doc"])
@@ -174,6 +175,7 @@ class GetPackagesTestCase(DHCMakeBaseTestCase):
             "libdhcmake-test",
         })
 
+    @skip("Not implemented yet")
     def test_get_packages_blacklist_long(self):
         self.dhcmake_base.parse_args(["--no-package", "libdhcmake-test-dev",
                                       "--no-package", "libdhcmake-test-doc"])
