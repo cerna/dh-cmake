@@ -134,3 +134,12 @@ class DHCMakeBase:
                 result.append(name)
 
         return result
+
+    def get_main_package(self):
+        if self.options.mainpackage:
+            return self.options.mainpackage
+        else:
+            with open("debian/control", "r") as f:
+                source, packages = deb822.read_control(f)
+
+            return packages[0]["package"]

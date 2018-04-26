@@ -109,3 +109,15 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
         self.check_packages({
             "libdh-cmake-test-doc",
         })
+
+    def test_get_main_package_default(self):
+        self.dhcmake_base.parse_args([])
+
+        self.assertEqual("libdh-cmake-test",
+                         self.dhcmake_base.get_main_package())
+
+    def test_get_main_package_specified(self):
+        self.dhcmake_base.parse_args(["--mainpackage=libdh-cmake-test-dev"])
+
+        self.assertEqual("libdh-cmake-test-dev",
+                         self.dhcmake_base.get_main_package())
