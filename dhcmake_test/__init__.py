@@ -3,10 +3,25 @@
 
 import os.path
 import tempfile
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from dhcmake import common
 import dhcmake_test
+
+
+DEBIAN_CONTROL = \
+r"""Source: libdhcmake-test
+Maintainer: Kitware Debian Maintainers <debian@kitware.com>
+
+Package: libdhcmake-test
+Architecture: any
+
+Package: libdhcmake-test-dev
+Architecture: any
+
+Package: libdhcmake-test-doc
+Architecture: all
+"""
 
 
 class VolatileNamedTemporaryFile:
@@ -93,6 +108,20 @@ class DHCMakeBaseTestCase(RunCMakeTestCaseBase):
         super().setUp()
         self.dhcmake_base = common.DHCMakeBase()
 
+        self.make_src_dir("debian")
+
+        self.write_src_file("debian/control", DEBIAN_CONTROL)
+
+        self.old_cwd = os.getcwd()
+        os.chdir(self.src_dir.name)
+
+    def tearDown(self):
+        os.chdir(self.old_cwd)
+        super().tearDown()
+
+    def check_packages(self, expected_packages):
+        self.assertEqual(expected_packages, set(self.dhcmake_base.get_packages()))
+
     def test_do_cmd(self):
         self.dhcmake_base.parse_args([])
 
@@ -107,5 +136,48 @@ class DHCMakeBaseTestCase(RunCMakeTestCaseBase):
             self.dhcmake_base.do_cmd(["rm", f.name])
             self.assertFileExists(f.name)
 
+
+@skip("Not implemented yet")
+class GetPackagesTestCase(DHCMakeBaseTestCase):
     def test_get_packages_default(self):
-        pass
+        self.dhcmake_base.parse_args([])
+
+        self.check_packages({
+            "libdhcmake-test",
+            "libdhcmake-test-dev",
+            "libdhcmake-test-doc",
+        })
+
+    def test_get_packages_whitelist_short(self):
+        self.dhcmake_base.parse_args(["-plibdhcmake-test-dev",
+                                      "-plibdhcmake-test-doc"])
+
+        self.check_packages({
+            "libdhcmake-test-dev",
+            "libdhcmake-test-doc",
+        })
+
+    def test_get_packages_whitelist_long(self):
+        self.dhcmake_base.parse_args(["--package", "libdhcmake-test-dev",
+                                      "--package", "libdhcmake-test-doc"])
+
+        self.check_packages({
+            "libdhcmake-test-dev",
+            "libdhcmake-test-doc",
+        })
+
+    def test_get_packages_blacklist_short(self):
+        self.dhcmake_base.parse_args(["-Nlibdhcmake-test-dev",
+                                      "-Nlibdhcmake-test-doc"])
+
+        self.check_packages({
+            "libdhcmake-test",
+        })
+
+    def test_get_packages_blacklist_long(self):
+        self.dhcmake_base.parse_args(["--no-package", "libdhcmake-test-dev",
+                                      "--no-package", "libdhcmake-test-doc"])
+
+        self.check_packages({
+            "libdhcmake-test",
+        })

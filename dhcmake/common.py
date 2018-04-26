@@ -2,6 +2,7 @@
 # See top-level LICENSE file for license information.
 
 import argparse
+import debian.deb822
 import os.path
 import subprocess
 import sys
@@ -107,3 +108,10 @@ class DHCMakeBase:
                 stdout = stderr = None
             subprocess.run(args, stdout=stdout, stderr=stderr, env=env,
                            cwd=cwd, check=True)
+
+    def get_packages(self):
+        with open("debian/control", "r") as f:
+            control_iter = debian.deb822.Deb822.iter_paragraphs(f)
+            source_paragraph = next(control_iter)
+
+            pass

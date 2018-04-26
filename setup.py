@@ -14,6 +14,7 @@ setup( \
     author_email="kyle.edwards@kitware.com",
     license="BSD 3 clause",
     packages=["dhcmake"],
+    install_requires=["python-debian"],
     entry_points={
         "console_scripts": ["dh_cpack=dhcmake.cpack.main"],
     },
