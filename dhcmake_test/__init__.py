@@ -6,6 +6,8 @@ import shutil
 import tempfile
 from unittest import TestCase
 
+import dhcmake.common
+
 
 class VolatileNamedTemporaryFile:
     def __init__(self, *args, **kwargs):
@@ -57,6 +59,12 @@ class KWTestCaseBase(TestCase):
         except AssertionError:
             os.unlink(name)
             raise
+
+    @classmethod
+    def replace_arch_in_paths(cls, paths):
+        return (p.format(arch=dhcmake.common \
+                .dpkg_architecture()["DEB_HOST_GNU_TYPE"])
+            for p in paths)
 
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):

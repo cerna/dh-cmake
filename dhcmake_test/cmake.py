@@ -6,14 +6,45 @@ import subprocess
 import tempfile
 
 from dhcmake import common, cmake
-from dhcmake_test import DebianSourcePackageTestCaseBase
+from dhcmake_test import *
 
 
 class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
+    libraries_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/lib",
+        "usr/lib/{arch}",
+        "usr/lib/{arch}/libdh-cmake-test.so.1",
+        "usr/lib/{arch}/libdh-cmake-test.so.1.0",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so.1",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so.1.0",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so.1",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so.1.0",
+    }))
+
+    headers_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/include",
+        "usr/include/dh-cmake-test.h",
+        "usr/include/dh-cmake-test-lib1.h",
+        "usr/include/dh-cmake-test-lib2.h",
+    }))
+
+    namelinks_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/lib",
+        "usr/lib/{arch}",
+        "usr/lib/{arch}/libdh-cmake-test.so",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so",
+    }))
+
     def setUp(self):
         super().setUp()
 
         self.dhcmake = cmake.DHCMake()
+
+    def setup_do_cmake_install(self):
 
         self.build_dir = self.make_directory_in_tmp("build")
 
@@ -33,27 +64,18 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.install_dev_dir = self.make_directory_in_tmp("install-dev")
 
     def test_cmake_install_all(self):
+        self.setup_do_cmake_install()
         self.dhcmake.parse_args([])
 
         self.dhcmake.do_cmake_install(self.build_dir,
                                       self.install_all_dir,
                                       suppress_output=True)
 
-        expected_files = {
-            "usr",
-            "usr/lib",
-            "usr/lib/libdh-cmake-test.so",
-            "usr/lib/libdh-cmake-test-lib1.so",
-            "usr/lib/libdh-cmake-test-lib2.so",
-            "usr/include",
-            "usr/include/dh-cmake-test.h",
-            "usr/include/dh-cmake-test-lib1.h",
-            "usr/include/dh-cmake-test-lib2.h",
-        }
-
-        self.assertFileTreeEqual(expected_files, self.install_all_dir)
+        self.assertFileTreeEqual(self.libraries_files | self.headers_files \
+                                 | self.namelinks_files, self.install_all_dir)
 
     def test_cmake_install_subdirectory(self):
+        self.setup_do_cmake_install()
         self.dhcmake.parse_args([])
 
         self.dhcmake.do_cmake_install(
@@ -61,31 +83,27 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
             self.install_all_dir,
             suppress_output=True)
 
-        expected_files = {
+        self.assertFileTreeEqual(set(self.replace_arch_in_paths({
             "usr",
             "usr/lib",
-            "usr/lib/libdh-cmake-test-lib1.so",
+            "usr/lib/{arch}",
+            "usr/lib/{arch}/libdh-cmake-test-lib1.so",
+            "usr/lib/{arch}/libdh-cmake-test-lib1.so.1",
+            "usr/lib/{arch}/libdh-cmake-test-lib1.so.1.0",
             "usr/include",
             "usr/include/dh-cmake-test-lib1.h",
-        }
-
-        self.assertFileTreeEqual(expected_files, self.install_all_dir)
+        })), self.install_all_dir)
 
     def test_cmake_install_one_component(self):
+        self.setup_do_cmake_install()
         self.dhcmake.parse_args([])
 
         self.dhcmake.do_cmake_install(self.build_dir,
                                       self.install_dev_dir,
-                                      component="dh-cmake-test-Development",
+                                      component="Headers",
                                       suppress_output=True)
 
-        expected_files = {
-            "usr",
-            "usr/include",
-            "usr/include/dh-cmake-test.h",
-        }
-
-        self.assertFileTreeEqual(expected_files, self.install_dev_dir)
+        self.assertFileTreeEqual(self.headers_files, self.install_dev_dir)
 
     def test_get_cmake_components(self):
         self.dhcmake.parse_args([])
@@ -101,3 +119,43 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
             "Headers",
             "Namelinks",
         ], self.dhcmake.get_cmake_components("libdh-cmake-test-dev"))
+
+    def test_get_cmake_components_noexist(self):
+        self.dhcmake.parse_args([])
+
+        self.assertEqual([], self.dhcmake.get_cmake_components(
+            "libdh-cmake-test-doc"))
+
+    def do_dh_cmake_install(self, args):
+        self.dhcmake.parse_args(args)
+
+        os.mkdir(self.dhcmake.get_build_directory())
+
+        subprocess.run(
+            [
+                "cmake", "-G", "Unix Makefiles", "-DCMAKE_INSTALL_PREFIX=/usr",
+                self.src_dir,
+            ], cwd=self.dhcmake.get_build_directory(), stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, check=True)
+
+        subprocess.run(["make"], cwd=self.dhcmake.get_build_directory(),
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                       check=True)
+
+        self.dhcmake.run()
+
+    def test_dh_cmake_install_default(self):
+        self.do_dh_cmake_install([])
+
+        self.assertFileTreeEqual(self.libraries_files,
+                                 "debian/libdh-cmake-test")
+
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files,
+                                 "debian/libdh-cmake-test-dev")
+
+    def test_dh_cmake_install_tmpdir(self):
+        self.do_dh_cmake_install(["--tmpdir=debian/tmp"])
+
+        self.assertFileTreeEqual(self.libraries_files | self.headers_files \
+                                 | self.namelinks_files,
+                                 "debian/tmp")
