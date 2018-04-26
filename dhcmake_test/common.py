@@ -121,3 +121,23 @@ class DHCMakeBaseTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertEqual("libdh-cmake-test-dev",
                          self.dhcmake_base.get_main_package())
+
+    def test_get_package_file_main(self):
+        self.dhcmake_base.parse_args([])
+
+        self.assertEqual(
+            "debian/cmake-components",
+            self.dhcmake_base.get_package_file(
+                "libdh-cmake-test","cmake-components"
+            )
+        )
+
+    def test_get_package_file_other(self):
+        self.dhcmake_base.parse_args([])
+
+        self.assertEqual(
+            "debian/libdh-cmake-test-dev.cmake-components",
+            self.dhcmake_base.get_package_file(
+                "libdh-cmake-test-dev","cmake-components"
+            )
+        )

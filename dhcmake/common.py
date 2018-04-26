@@ -143,3 +143,9 @@ class DHCMakeBase:
                 source, packages = deb822.read_control(f)
 
             return packages[0]["package"]
+
+    def get_package_file(self, package, extension):
+        if package == self.get_main_package():
+            return os.path.join("debian", extension)
+        else:
+            return os.path.join("debian", package + "." + extension)
