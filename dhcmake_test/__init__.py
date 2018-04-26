@@ -46,7 +46,7 @@ class VolatileNamedTemporaryFile:
         self.close()
 
 
-class DHCMakeTestCaseBase(TestCase):
+class KWTestCaseBase(TestCase):
     def assertFileExists(self, path):
         self.assertTrue(os.path.exists(
             path), "File '{0}' does not exist".format(path))
@@ -76,7 +76,7 @@ class DHCMakeTestCaseBase(TestCase):
             raise
 
 
-class VolatileNamedTemporaryFileTestCase(DHCMakeTestCaseBase):
+class VolatileNamedTemporaryFileTestCase(KWTestCaseBase):
     def test_normal_delete(self):
         with VolatileNamedTemporaryFile() as f:
             pass
@@ -88,7 +88,7 @@ class VolatileNamedTemporaryFileTestCase(DHCMakeTestCaseBase):
         self.assertVolatileFileNotExists(f.name)
 
 
-class RunCMakeTestCaseBase(DHCMakeTestCaseBase):
+class RunCMakeTestCaseBase(KWTestCaseBase):
     def setUp(self):
         self.src_dir = tempfile.TemporaryDirectory()
 
