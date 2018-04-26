@@ -8,14 +8,22 @@ from dhcmake_test import DebianSourcePackageTestCaseBase
 
 
 class Deb822TestCase(DebianSourcePackageTestCaseBase):
-    def test_control_source(self):
+    def test_control(self):
         with self.open("debian/control", "r") as f:
-            control_source = deb822.ControlSource(f)
+            source, packages = deb822.read_control(f)
 
-        self.assertEqual("dh-cmake-test", control_source["source"])
-        self.assertEqual("Kitware Debian Maintainers <debian@kitware.com>",
-                         control_source["maintainer"])
-        self.assertEqual([
-            "Kyle Edwards <kyle.edwards@kitware.com>",
-            "Kitware Robot <kwrobot@kitware.com>",
-        ], control_source.uploaders)
+        self.assertEqual("dh-cmake-test", source["source"])
+
+        self.assertEqual(3, len(packages))
+
+        package = packages[0]
+        self.assertEqual("libdh-cmake-test", package["package"])
+        self.assertEqual("any", package["architecture"])
+
+        package = packages[1]
+        self.assertEqual("libdh-cmake-test-dev", package["package"])
+        self.assertEqual("any", package["architecture"])
+
+        package = packages[2]
+        self.assertEqual("libdh-cmake-test-doc", package["package"])
+        self.assertEqual("all", package["architecture"])

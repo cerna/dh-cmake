@@ -4,7 +4,17 @@
 import debian.deb822
 
 
+def read_control(sequence, *args, **kwargs):
+    iterator = debian.deb822.Deb822.iter_paragraphs(sequence, *args, **kwargs)
+    source = ControlSource(next(iterator).dump())
+    packages = [ControlPackage(p.dump()) for p in iterator]
+
+    return source, packages
+
+
 class ControlSource(debian.deb822.Deb822):
-    @property
-    def uploaders(self):
-        return [s.strip() for s in self["uploaders"].split(",")]
+    pass
+
+
+class ControlPackage(debian.deb822.Deb822):
+    pass

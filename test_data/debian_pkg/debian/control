@@ -3,3 +3,12 @@ Maintainer: Kitware Debian Maintainers <debian@kitware.com>
 Uploaders:
     Kyle Edwards <kyle.edwards@kitware.com>,
     Kitware Robot <kwrobot@kitware.com>
+
+Package: libdh-cmake-test
+Architecture: any
+
+Package: libdh-cmake-test-dev
+Architecture: any
+
+Package: libdh-cmake-test-doc
+Architecture: all
