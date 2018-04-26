@@ -86,3 +86,18 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         }
 
         self.assertFileTreeEqual(expected_files, self.install_dev_dir)
+
+    def test_get_cmake_components(self):
+        self.dhcmake.parse_args([])
+
+        self.assertEqual([
+            "Libraries",
+        ], self.dhcmake.get_cmake_components("libdh-cmake-test"))
+
+    def test_get_cmake_components_executable(self):
+        self.dhcmake.parse_args([])
+
+        self.assertEqual([
+            "Headers",
+            "Namelinks",
+        ], self.dhcmake.get_cmake_components("libdh-cmake-test-dev"))

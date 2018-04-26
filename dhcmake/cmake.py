@@ -1,12 +1,25 @@
 # This file is part of dh-cmake.
 # See top-level LICENSE file for license information.
 
-import dhcmake.common
-
+import io
 import os.path
+import subprocess
+
+from dhcmake import common
 
 
-class DHCMake(dhcmake.common.DHCMakeBase):
+class DHCMake(common.DHCMakeBase):
+    def get_cmake_components(self, package):
+        package_file = os.path.abspath(
+            self.get_package_file(package, "cmake-components"))
+        if os.access(package_file, os.X_OK):
+            contents = subprocess.check_output([package_file]).decode("utf-8")
+        else:
+            with open(package_file, "r") as f:
+                contents = f.read()
+
+        return [l.rstrip() for l in io.StringIO(contents)]
+
     def do_cmake_install(self, builddir, destdir, component=None,
                          suppress_output=False):
         args = ["cmake"]
