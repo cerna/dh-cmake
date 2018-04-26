@@ -62,7 +62,7 @@ CMake provides a way to break an installation up into components, and
 `dh_cmake_install` takes advantage of this functionality. Let's revise our
 `CMakeLists.txt` file:
 
-```
+```cmake
 cmake_minimum_required(VERSION 3.12)
 project(example C)
 
@@ -87,7 +87,7 @@ install(TARGETS example
 
 Revised `debian/rules` file:
 
-```
+```makefile
 %:
         dh $@ --buildsystem=cmake --with cmake
 ```
