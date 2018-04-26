@@ -2,6 +2,7 @@
 # See top-level LICENSE file for license information.
 
 import os.path
+import shutil
 import tempfile
 from unittest import TestCase, skip
 
@@ -74,6 +75,26 @@ class KWTestCaseBase(TestCase):
         except AssertionError:
             os.unlink(name)
             raise
+
+
+class DebianSourcePackageTestCaseBase(KWTestCaseBase):
+    def setUp(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(test_dir)
+        test_data_dir = os.path.join(root_dir, "test_data")
+        debian_pkg_dir = os.path.join(test_data_dir, "debian_pkg")
+
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.src_dir = os.path.join(self.tmp_dir.name, "src")
+
+        shutil.copytree(debian_pkg_dir, self.src_dir)
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
+
+    def open(self, filename, *args, **kwargs):
+        path = os.path.join(self.src_dir, filename)
+        return open(path, *args, **kwargs)
 
 
 class VolatileNamedTemporaryFileTestCase(KWTestCaseBase):

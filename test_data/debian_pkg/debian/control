@@ -1,0 +1,5 @@
+Source: dh-cmake-test
+Maintainer: Kitware Debian Maintainers <debian@kitware.com>
+Uploaders:
+    Kyle Edwards <kyle.edwards@kitware.com>,
+    Kitware Robot <kwrobot@kitware.com>
