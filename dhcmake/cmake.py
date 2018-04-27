@@ -8,7 +8,7 @@ import subprocess
 from dhcmake import common
 
 
-class DHCMake(common.DHCMakeBase):
+class DHCMake(common.DHCommon):
     def get_cmake_components(self, package):
         package_file = os.path.abspath(
             self.get_package_file(package, "cmake-components"))

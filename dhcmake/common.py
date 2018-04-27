@@ -36,7 +36,7 @@ def format_arg_for_print(arg):
         return arg
 
 
-class DHCMakeBase:
+class DHCommon:
     def __init__(self):
         self.options = argparse.Namespace()
         self.options.type = "both"
