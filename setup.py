@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
-# This file is part of dh-cmake.
-# See top-level LICENSE file for license information.
+# This file is part of dh-cmake, and is distributed under the OSI-approved
+# BSD 3-Clause license. See top-level LICENSE file or
+# https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 from setuptools import setup
 
 
-setup( \
+setup(
     name="dh-cmake",
     description="Debhelper program for CMake projects",
     url="https://gitlab.kitware.com/debian/dh-cmake",
     author="Kyle Edwards",
     author_email="kyle.edwards@kitware.com",
-    license="BSD 3 clause",
+    maintainer="Kitware Debian Maintainers",
+    maintainer_email="debian@kitware.com",
+    classifiers=[
+        "License :: OSI Approved :: BSD License",
+    ],
     packages=["dhcmake"],
     install_requires=["python-debian"],
     entry_points={
