@@ -122,25 +122,51 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.assertEqual("libdh-cmake-test-dev",
                          self.dhcommon.get_main_package())
 
-    def test_get_package_file_main(self):
+    def test_get_package_file(self):
         self.dhcommon.parse_args([])
 
         self.assertEqual(
             "debian/cmake-components",
             self.dhcommon.get_package_file(
-                "libdh-cmake-test","cmake-components"
+                "libdh-cmake-test", "cmake-components"
             )
         )
-
-    def test_get_package_file_other(self):
-        self.dhcommon.parse_args([])
 
         self.assertEqual(
             "debian/libdh-cmake-test-dev.cmake-components",
             self.dhcommon.get_package_file(
-                "libdh-cmake-test-dev","cmake-components"
+                "libdh-cmake-test-dev", "cmake-components"
             )
         )
+
+        self.assertIsNone(self.dhcommon.get_package_file(
+            "libdh-cmake-test-doc", "cmake-components"))
+
+        self.assertEqual(
+            "debian/libdh-cmake-test.specific",
+            self.dhcommon.get_package_file(
+                "libdh-cmake-test", "specific"
+            )
+        )
+
+        self.assertEqual(
+            "debian/libdh-cmake-test.both",
+            self.dhcommon.get_package_file(
+                "libdh-cmake-test", "both"
+            )
+        )
+
+    def test_read_package_file(self):
+        self.dhcommon.parse_args([])
+
+        with self.dhcommon.read_package_file(
+                "libdh-cmake-test", "cmake-components") as f:
+            self.assertEqual("Libraries\n", f.read())
+        with self.dhcommon.read_package_file(
+                "libdh-cmake-test-dev", "cmake-components") as f:
+            self.assertEqual("Headers\nNamelinks\n", f.read())
+        self.assertIsNone(self.dhcommon.read_package_file(
+            "libdh-cmake-test-doc", "cmake-components"))
 
     def test_build_directory_default(self):
         self.dhcommon.parse_args([])

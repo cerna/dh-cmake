@@ -2,6 +2,7 @@
 # See top-level LICENSE file for license information.
 
 import argparse
+import io
 import os.path
 import subprocess
 import sys
@@ -144,10 +145,27 @@ class DHCommon:
             return packages[0]["package"]
 
     def get_package_file(self, package, extension):
+        paths = [
+            os.path.join("debian", package + "." + extension),
+        ]
+
         if package == self.get_main_package():
-            return os.path.join("debian", extension)
+            paths.append(os.path.join("debian", extension))
+
+        for p in paths:
+            if os.path.exists(p):
+                return p
+        return None
+
+    def read_package_file(self, package, extension):
+        path = self.get_package_file(package, extension)
+        if path is None:
+            return None
+        elif os.access(path, os.X_OK):
+            return io.StringIO(subprocess.check_output(
+                [os.path.abspath(path)]).decode("utf-8"))
         else:
-            return os.path.join("debian", package + "." + extension)
+            return open(path, "r")
 
     def get_build_directory(self):
         return self.options.builddirectory

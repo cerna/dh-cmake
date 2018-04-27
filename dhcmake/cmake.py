@@ -1,7 +1,6 @@
 # This file is part of dh-cmake.
 # See top-level LICENSE file for license information.
 
-import io
 import os.path
 import subprocess
 
@@ -10,16 +9,10 @@ from dhcmake import common
 
 class DHCMake(common.DHCommon):
     def get_cmake_components(self, package):
-        package_file = os.path.abspath(
-            self.get_package_file(package, "cmake-components"))
-        if os.path.exists(package_file):
-            if os.access(package_file, os.X_OK):
-                contents = subprocess.check_output([package_file]).decode("utf-8")
-            else:
-                with open(package_file, "r") as f:
-                    contents = f.read()
-
-            return [l.rstrip() for l in io.StringIO(contents)]
+        opened_file = self.read_package_file(package, "cmake-components")
+        if opened_file:
+            with opened_file as f:
+                return [l.rstrip() for l in f]
         else:
             return []
 
