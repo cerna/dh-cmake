@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=dh-cmake
+
+%:
+	dh $@  --with python3 --buildsystem=pybuild
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=pybuild
+	dh_install perl5 /usr/share

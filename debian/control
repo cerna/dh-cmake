@@ -1,0 +1,30 @@
+Source: dh-cmake
+Section: devel
+Priority: optional
+Maintainer: Kitware Debian Maintainers <debian@kitware.com>
+Uploaders:
+    Kyle Edwards <kyle.edwards@kitware.com>,
+    Kitware Robot <kwrobot@kitware.com>
+Build-Depends:
+    debhelper (>=11),
+    dh-python,
+    python3-all,
+    python3-setuptools
+Standards-Version: 4.1.4.1
+Homepage: https://gitlab.kitware.com/debian/dh-cmake
+Vcs-Git: https://gitlab.kitware.com/debian/dh-cmake.git
+Vcs-Browser: https://gitlab.kitware.com/debian/dh-cmake
+X-Python3-Version: >= 3.2
+
+Package: dh-cmake
+Architecture: all
+Depends:
+    ${python3:Depends},
+    ${misc:Depends},
+    ${perl:Depends},
+    debhelper,
+    cmake
+Description: Debhelper programs for CMake projects
+ dh-cmake provides a set of Debhelper utilities for building packages that use
+ advanced features of the CMake buildsystem, such as component installation,
+ CTest dashboard testing, and CPack dependency metadata.
