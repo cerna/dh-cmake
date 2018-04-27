@@ -1,5 +1,5 @@
-dh-cmake (0.1~) unstable; urgency=medium
+dh-cmake (0.1) unstable; urgency=low
 
-  * Under development
+  * Initial release.
 
- -- Kyle Edwards <kyle.edwards@kitware.com>  Fri, 27 Apr 2018 10:00:03 -0400
+ -- Kyle Edwards <kyle.edwards@kitware.com>  Fri, 27 Apr 2018 13:36:31 -0400

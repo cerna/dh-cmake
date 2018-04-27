@@ -9,6 +9,7 @@ from setuptools import setup
 
 setup(
     name="dh-cmake",
+    version="0.1",
     description="Debhelper program for CMake projects",
     url="https://gitlab.kitware.com/debian/dh-cmake",
     author="Kyle Edwards",
