@@ -20,7 +20,7 @@ project(example C)
 
 include(GNUInstallDirs)
 
-add_library(example example.c)
+add_library(example SHARED example.c)
 set_target_properties(example PROPERTIES
   PUBLIC_HEADER "example.h"
   VERSION 1.0
@@ -68,7 +68,7 @@ project(example C)
 
 include(GNUInstallDirs)
 
-add_library(example example.c)
+add_library(example SHARED example.c)
 set_target_properties(example PROPERTIES
   PUBLIC_HEADER "example.h"
   VERSION 1.0
