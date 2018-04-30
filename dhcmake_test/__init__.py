@@ -67,6 +67,10 @@ class KWTestCaseBase(TestCase):
                 .dpkg_architecture()["DEB_HOST_GNU_TYPE"])
             for p in paths)
 
+    def get_single_element(self, l):
+        self.assertEqual(1, len(l))
+        return l[0]
+
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):
     def setUp(self):

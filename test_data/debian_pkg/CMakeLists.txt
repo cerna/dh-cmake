@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(dh-cmake-test C)
 
 include(GNUInstallDirs)
+include(CTest)
 
 macro(declare_lib LIBNAME)
   add_library(${LIBNAME} SHARED "${LIBNAME}.c")
@@ -30,3 +31,6 @@ endmacro()
 declare_lib(dh-cmake-test)
 add_subdirectory(lib1)
 add_subdirectory(lib2)
+
+add_test(TestTrue true)
+add_test(TestFalse false)

@@ -3,7 +3,6 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import os.path
-import subprocess
 
 from dhcmake import common
 

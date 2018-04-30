@@ -22,6 +22,19 @@ setup(
     packages=["dhcmake"],
     install_requires=["python-debian"],
     entry_points={
-        "console_scripts": ["dh_cmake_install=dhcmake.cmake:install"],
+        "console_scripts": [
+            "dh_cmake_install=dhcmake.cmake:install",
+            "dh_ctest_start=dhctest.ctest:start",
+            "dh_ctest_configure=dhctest.ctest:configure",
+            "dh_ctest_build=dhctest.ctest:build",
+            "dh_ctest_test=dhctest.ctest:test",
+            "dh_ctest_submit=dhctest.ctest:submit",
+        ],
     },
+    package_data={
+        "dhcmake": ["dh_ctest_driver.cmake"],
+    },
+    data_files=[
+        ("share/perl5/Debian/Debhelper/Sequence", ["perl5/Debian/Debhelper/Sequence/cmake.pm"]),
+    ],
 )
