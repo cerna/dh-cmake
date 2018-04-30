@@ -38,4 +38,8 @@ if(DH_CMAKE_TEST_FLAG)
 endif()
 
 add_test(TestTrue true)
-add_test(TestFalse false)
+
+option(DH_CMAKE_ENABLE_BAD_TEST "Enable bad test" ON)
+if(DH_CMAKE_ENABLE_BAD_TEST)
+  add_test(TestFalse false)
+endif()
