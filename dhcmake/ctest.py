@@ -8,6 +8,19 @@ import pkg_resources
 from dhcmake import common
 
 
+def format_arg_for_ctest(arg):
+    arg = arg.replace("\\", "\\\\")
+    arg = arg.replace('"', '\\"')
+    arg = arg.replace("'", "\\'")
+    arg = arg.replace(" ", "\\ ")
+    arg = arg.replace("\t", "\\\t")
+    return arg
+
+
+def format_args_for_ctest(args):
+    return " ".join(format_arg_for_ctest(a) for a in args)
+
+
 class DHCTest(common.DHCommon):
     def get_dh_ctest_driver(self):
         return pkg_resources.resource_filename(__name__,
@@ -22,9 +35,11 @@ class DHCTest(common.DHCommon):
             "-DDH_CTEST_BUILDDIR:PATH=" + self.get_build_directory(),
             "-DDH_CTEST_DASHBOARD_MODEL:STRING=Experimental",
             "-DDH_CTEST_CONFIGURE_CMD:STRING=" \
-                + " ".join('"{0}"'.format(p.replace('"', r'\"')) \
-                    for p in ["dh_auto_configure", *self.parsed_args]),
-            "-DDH_CTEST_BUILD_CMD:STRING=dh_auto_build",
+                + format_args_for_ctest(["dh_auto_configure",
+                                         *self.parsed_args]),
+            "-DDH_CTEST_BUILD_CMD:STRING=" \
+                + format_args_for_ctest(["dh_auto_build",
+                                         *self.parsed_args]),
             "-DDH_CTEST_STEP:STRING=" + step,
         ]
         self.do_cmd(args, suppress_output=suppress_output)

@@ -27,6 +27,7 @@ def dpkg_architecture():
 
     return _dpkg_architecture_values
 
+
 def format_arg_for_print(arg):
     arg = arg.replace("\\", "\\\\")
     arg = arg.replace('"', '\\"')
