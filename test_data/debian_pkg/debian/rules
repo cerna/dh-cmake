@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+ifdef DH_CMAKE_CASE
+include $(CURDIR)/debian/$(DH_CMAKE_CASE).mk
+else
+%:
+	dh $@ --buildsystem=cmake --with cmake
+
+override_dh_auto_test:
+endif

@@ -40,6 +40,22 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         "usr/lib/{arch}/libdh-cmake-test-lib2.so",
     }))
 
+    libdh_cmake_test_files = {
+        "usr",
+        "usr/share",
+        "usr/share/doc",
+        "usr/share/doc/libdh-cmake-test",
+        "usr/share/doc/libdh-cmake-test/changelog.Debian.gz",
+    }
+
+    libdh_cmake_test_dev_files = {
+        "usr",
+        "usr/share",
+        "usr/share/doc",
+        "usr/share/doc/libdh-cmake-test-dev",
+        "usr/share/doc/libdh-cmake-test-dev/changelog.Debian.gz",
+    }
+
     def setUp(self):
         super().setUp()
 
@@ -160,3 +176,24 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileTreeEqual(self.libraries_files | self.headers_files \
                                  | self.namelinks_files,
                                  "debian/tmp")
+
+    def run_debian_rules(self, rule, case=None):
+        env = os.environ.copy()
+        if case:
+            env["DH_CMAKE_CASE"] = case
+
+        subprocess.run(["fakeroot", "debian/rules", rule], env=env,
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL, check=True)
+
+    def test_run_debian_rules(self):
+        self.run_debian_rules("build")
+        self.run_debian_rules("install")
+
+        self.assertFileTreeEqual(self.libraries_files \
+                                 | self.libdh_cmake_test_files,
+                                 "debian/libdh-cmake-test")
+
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files \
+                                 | self.libdh_cmake_test_dev_files,
+                                 "debian/libdh-cmake-test-dev")
