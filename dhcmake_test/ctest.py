@@ -79,8 +79,7 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
     def test_start(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
 
-        self.dhctest.parse_args([])
-        self.dhctest.start()
+        self.dhctest.start([])
         with open("debian/.ctest/Testing/TAG", "r") as f:
             self.assertRegex(next(f), "^[0-9]{8}-[0-9]{4}$")
             self.assertEqual("Experimental", next(f).rstrip())
@@ -88,9 +87,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                 next(f)
 
     def test_configure(self):
-        self.dhctest.parse_args([])
-        self.dhctest.start()
-        self.dhctest.configure()
+        self.dhctest.start([])
+        self.dhctest.configure([])
         date = self.get_testing_tag_date()
 
         self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
@@ -99,11 +97,27 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing", date,
                                               "Build.xml"))
 
+        self.assertFileNotExists(
+            os.path.join(self.dhctest.get_build_directory(), "testflag.txt"))
+
+    def test_configure_args(self):
+        self.dhctest.start([])
+        self.dhctest.configure(["--", "-DDH_CMAKE_TEST_FLAG:BOOL=ON"])
+        date = self.get_testing_tag_date()
+
+        self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                           "Configure.xml"))
+
+        self.assertFileNotExists(os.path.join("debian/.ctest/Testing", date,
+                                              "Build.xml"))
+
+        self.assertFileExists(
+            os.path.join(self.dhctest.get_build_directory(), "testflag.txt"))
+
     def test_build(self):
-        self.dhctest.parse_args([])
-        self.dhctest.start()
-        self.dhctest.configure()
-        self.dhctest.build()
+        self.dhctest.start([])
+        self.dhctest.configure([])
+        self.dhctest.build([])
         date = self.get_testing_tag_date()
 
         self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
@@ -112,11 +126,10 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                                               "Test.xml"))
 
     def test_test(self):
-        self.dhctest.parse_args([])
-        self.dhctest.start()
-        self.dhctest.configure()
-        self.dhctest.build()
-        self.dhctest.test()
+        self.dhctest.start([])
+        self.dhctest.configure([])
+        self.dhctest.build([])
+        self.dhctest.test([])
         date = self.get_testing_tag_date()
 
         with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
@@ -135,11 +148,10 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertEqual("failed", test_false.get("Status"))
 
     def test_submit(self):
-        self.dhctest.parse_args([])
-        self.dhctest.start()
-        self.dhctest.configure()
-        self.dhctest.build()
-        self.dhctest.test()
-        self.dhctest.submit()
+        self.dhctest.start([])
+        self.dhctest.configure([])
+        self.dhctest.build([])
+        self.dhctest.test([])
+        self.dhctest.submit([])
 
         self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})

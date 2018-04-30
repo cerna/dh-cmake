@@ -24,11 +24,11 @@ setup(
     entry_points={
         "console_scripts": [
             "dh_cmake_install=dhcmake.cmake:install",
-            "dh_ctest_start=dhctest.ctest:start",
-            "dh_ctest_configure=dhctest.ctest:configure",
-            "dh_ctest_build=dhctest.ctest:build",
-            "dh_ctest_test=dhctest.ctest:test",
-            "dh_ctest_submit=dhctest.ctest:submit",
+            "dh_ctest_start=dhcmake.ctest:start",
+            "dh_ctest_configure=dhcmake.ctest:configure",
+            "dh_ctest_build=dhcmake.ctest:build",
+            "dh_ctest_test=dhcmake.ctest:test",
+            "dh_ctest_submit=dhcmake.ctest:submit",
         ],
     },
     package_data={

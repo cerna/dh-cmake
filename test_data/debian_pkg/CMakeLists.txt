@@ -32,5 +32,10 @@ declare_lib(dh-cmake-test)
 add_subdirectory(lib1)
 add_subdirectory(lib2)
 
+option(DH_CMAKE_TEST_FLAG "For testing -D definitions" OFF)
+if(DH_CMAKE_TEST_FLAG)
+  file(WRITE "${CMAKE_BINARY_DIR}/testflag.txt" "Test flag set\n")
+endif()
+
 add_test(TestTrue true)
 add_test(TestFalse false)

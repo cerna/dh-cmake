@@ -16,58 +16,60 @@ class DHCTest(common.DHCommon):
     def do_ctest_step(self, step, extra_params=None, suppress_output=False):
         args = [
             "ctest", "-S", self.get_dh_ctest_driver(),
-            "-DDH_CTEST_SRCDIR=" + os.getcwd(),
-            "-DDH_CTEST_CTESTDIR=" + os.path.join(os.getcwd(),
-                                                  "debian/.ctest"),
-            "-DDH_CTEST_BUILDDIR=" + self.get_build_directory(),
-            "-DDH_CTEST_DASHBOARD_MODEL=Experimental",
-            "-DDH_CTEST_CONFIGURE_CMD=dh_auto_configure",
-            "-DDH_CTEST_BUILD_CMD=dh_auto_build",
-            "-DDH_CTEST_STEP=" + step,
+            "-DDH_CTEST_SRCDIR:PATH=" + os.getcwd(),
+            "-DDH_CTEST_CTESTDIR:PATH=" + os.path.join(os.getcwd(),
+                                                       "debian/.ctest"),
+            "-DDH_CTEST_BUILDDIR:PATH=" + self.get_build_directory(),
+            "-DDH_CTEST_DASHBOARD_MODEL:STRING=Experimental",
+            "-DDH_CTEST_CONFIGURE_CMD:STRING=" \
+                + " ".join('"{0}"'.format(p.replace('"', r'\"')) \
+                    for p in ["dh_auto_configure", *self.parsed_args]),
+            "-DDH_CTEST_BUILD_CMD:STRING=dh_auto_build",
+            "-DDH_CTEST_STEP:STRING=" + step,
         ]
         self.do_cmd(args, suppress_output=suppress_output)
 
-    def start(self):
+    def start(self, args=None):
+        self.parse_args(args)
         self.do_ctest_step("start")
 
-    def configure(self):
+    def configure(self, args=None):
+        self.parse_args(args)
         self.do_ctest_step("configure")
 
-    def build(self):
+    def build(self, args=None):
+        self.parse_args(args)
         self.do_ctest_step("build")
 
-    def test(self):
+    def test(self, args=None):
+        self.parse_args(args)
         self.do_ctest_step("test")
 
-    def submit(self):
+    def submit(self, args=None):
+        self.parse_args(args)
         self.do_ctest_step("submit")
 
 
 def start():
     dhctest = DHCTest()
-    dhctest.parse_args()
     dhctest.start()
 
 
 def configure():
     dhctest = DHCTest()
-    dhctest.parse_args()
     dhctest.configure()
 
 
 def build():
     dhctest = DHCTest()
-    dhctest.parse_args()
     dhctest.build()
 
 
 def test():
     dhctest = DHCTest()
-    dhctest.parse_args()
     dhctest.test()
 
 
 def submit():
     dhctest = DHCTest()
-    dhctest.parse_args()
     dhctest.submit()
