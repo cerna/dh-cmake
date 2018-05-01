@@ -293,3 +293,28 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.dh.submit([])
 
             self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+
+    def test_run_debian_rules_none(self):
+        self.run_debian_rules("build", "ctest")
+
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+        self.assertFileExists("debian/build/CMakeCache.txt")
+        self.assertFilesSubmittedEqual(set())
+
+    def test_run_debian_rules_experimental(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.run_debian_rules("build", "ctest")
+
+            self.assertFileExists("debian/.ctest/Testing/TAG")
+            self.assertFileExists("debian/build/CMakeCache.txt")
+            self.assertFilesSubmittedEqual(set())
+
+    def test_run_debian_rules_experimental_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.run_debian_rules("build", "ctest")
+
+            self.assertFileExists("debian/.ctest/Testing/TAG")
+            self.assertFileExists("debian/build/CMakeCache.txt")
+            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})

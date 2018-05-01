@@ -166,9 +166,12 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         os.mkdir(path)
         return path
 
-    def open(self, filename, *args, **kwargs):
-        path = os.path.join(self.src_dir, filename)
-        return open(path, *args, **kwargs)
+    def run_debian_rules(self, rule, case=None):
+        env = os.environ.copy()
+        if case:
+            env["DH_CMAKE_CASE"] = case
+
+        self.run_cmd(["fakeroot", "debian/rules", rule], env=env)
 
 
 class VolatileNamedTemporaryFileTestCase(KWTestCaseBase):

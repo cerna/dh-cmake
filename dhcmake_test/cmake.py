@@ -163,16 +163,9 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
                                  | self.namelinks_files,
                                  "debian/tmp")
 
-    def run_debian_rules(self, rule, case=None):
-        env = os.environ.copy()
-        if case:
-            env["DH_CMAKE_CASE"] = case
-
-        self.run_cmd(["fakeroot", "debian/rules", rule], env=env)
-
     def test_run_debian_rules(self):
-        self.run_debian_rules("build")
-        self.run_debian_rules("install")
+        self.run_debian_rules("build", "cmake")
+        self.run_debian_rules("install", "cmake")
 
         self.assertFileTreeEqual(self.libraries_files \
                                  | self.libdh_cmake_test_files,
