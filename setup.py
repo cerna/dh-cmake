@@ -35,6 +35,9 @@ setup(
         "dhcmake": ["dh_ctest_driver.cmake"],
     },
     data_files=[
-        ("share/perl5/Debian/Debhelper/Sequence", ["perl5/Debian/Debhelper/Sequence/cmake.pm"]),
+        ("share/perl5/Debian/Debhelper/Sequence", [
+            "perl5/Debian/Debhelper/Sequence/cmake.pm",
+            "perl5/Debian/Debhelper/Sequence/ctest.pm",
+        ]),
     ],
 )
