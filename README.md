@@ -5,6 +5,31 @@ Introduction
 Debian systems. It consists of three main Debhelper sequences: `cmake`,
 `ctest`, and `cpack`.
 
+### What About `--buildsystem=cmake`?
+
+If you've ever packaged a CMake project for Debian before, you probably know
+that Debhelper includes a `--buildsystem=cmake` option to handle the configure,
+build, and test steps. `dh-cmake` does not replace this option, but instead
+complements it with additional CMake functionality, such as:
+
+* Basic CMake component installation (for example, separate packages for
+  `Development` and `Runtime` components)
+* Integration with CTest dashboard mode to submit build and test logs to CDash
+  (for continuous integration on Debian systems)
+* Advanced CPack component and component group installation and dependency
+  metadata (for example, if CPack component A depends on component B, this will
+  be reflected in the generated Debian packages)
+
+The Debhelper team has done an excellent job of incorporating the CMake
+buildsystem into Debian, and our hope is that `dh-cmake` will make it even
+easier to package CMake projects on Debian. If you package a CMake project on
+Debian, you should use both the Debhelper CMake buildsystem AND `dh-cmake`.
+
+Note: as of Debhelper 11.2, you can use CMake's Ninja generator, by declaring
+`--buildsystem=cmake+ninja`. Kitware highly recommends using this option,
+especially for large projects, because it will speed up build time
+significantly.
+
 cmake
 -----
 
