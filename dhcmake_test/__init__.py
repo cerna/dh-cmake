@@ -75,7 +75,8 @@ class KWTestCaseBase(TestCase):
 
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):
-    def push_path(self, name, value):
+    @classmethod
+    def push_path(cls, name, value):
         try:
             old = os.environ[name]
         except KeyError:
@@ -88,11 +89,37 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         return old
 
-    def pop_path(self, name, value):
+    @classmethod
+    def pop_path(cls, name, value):
         if value is None:
             del os.environ[name]
         else:
             os.environ[name] = value
+
+    @classmethod
+    def setUpClass(cls):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(test_dir)
+        perl5_dir = os.path.join(root_dir, "perl5")
+
+        cls.scripts_install_dir = tempfile.TemporaryDirectory()
+
+        subprocess.run([os.path.join(root_dir, "setup.py"), "install_scripts",
+                        "--install-dir=" + cls.scripts_install_dir.name],
+                       check=True, stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+
+        cls.old_path = cls.push_path("PATH", cls.scripts_install_dir.name)
+        cls.old_perl5lib = cls.push_path("PERL5LIB", perl5_dir)
+        cls.old_pythonpath = cls.push_path("PYTHONPATH", root_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pop_path("PYTHONPATH", cls.old_pythonpath)
+        cls.pop_path("PERL5LIB", cls.old_perl5lib)
+        cls.pop_path("PATH", cls.old_path)
+
+        cls.scripts_install_dir.cleanup()
 
     def setUp(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -105,29 +132,12 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         shutil.copytree(debian_pkg_dir, self.src_dir)
 
-        self.scripts_install_dir = tempfile.TemporaryDirectory()
-
-        subprocess.run([os.path.join(root_dir, "setup.py"), "install_scripts",
-                        "--install-dir=" + self.scripts_install_dir.name],
-                       check=True, stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL)
-
         self.old_cwd = os.getcwd()
         os.chdir(self.src_dir)
 
-        self.old_path = self.push_path("PATH", self.scripts_install_dir.name)
-        self.old_perl5lib = self.push_path("PERL5LIB", os.path.join(root_dir,
-                                                                    "perl5"))
-        self.old_pythonpath = self.push_path("PYTHONPATH", root_dir)
-
     def tearDown(self):
-        self.pop_path("PYTHONPATH", self.old_pythonpath)
-        self.pop_path("PERL5LIB", self.old_perl5lib)
-        self.pop_path("PATH", self.old_path)
-
         os.chdir(self.old_cwd)
 
-        self.scripts_install_dir.cleanup()
         self.tmp_dir.cleanup()
 
     def make_directory_in_tmp(self, name):
