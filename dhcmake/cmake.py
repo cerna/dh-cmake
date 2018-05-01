@@ -16,15 +16,14 @@ class DHCMake(common.DHCommon):
         else:
             return []
 
-    def do_cmake_install(self, builddir, destdir, component=None,
-                         suppress_output=False):
+    def do_cmake_install(self, builddir, destdir, component=None):
         args = ["cmake"]
         if component:
             args += ["-DCOMPONENT=" + component]
         args += ["-P", os.path.join(builddir, "cmake_install.cmake")]
         env = os.environ.copy()
         env["DESTDIR"] = destdir
-        self.do_cmd(args, env=env, suppress_output=suppress_output)
+        self.do_cmd(args, env=env)
 
     def install(self, args=None):
         self.parse_args(args)

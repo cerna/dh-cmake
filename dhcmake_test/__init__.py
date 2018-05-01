@@ -73,6 +73,11 @@ class KWTestCaseBase(TestCase):
         self.assertEqual(1, len(l))
         return l[0]
 
+    @classmethod
+    def run_cmd(cls, args, cwd=None, env=None):
+        subprocess.run(args, cwd=cwd, env=env, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, check=True)
+
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):
     @classmethod
@@ -104,10 +109,8 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         cls.scripts_install_dir = tempfile.TemporaryDirectory()
 
-        subprocess.run([os.path.join(root_dir, "setup.py"), "install_scripts",
-                        "--install-dir=" + cls.scripts_install_dir.name],
-                       check=True, stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL)
+        cls.run_cmd([os.path.join(root_dir, "setup.py"), "install_scripts",
+                     "--install-dir=" + cls.scripts_install_dir.name])
 
         cls.old_path = cls.push_path("PATH", cls.scripts_install_dir.name)
         cls.old_perl5lib = cls.push_path("PERL5LIB", perl5_dir)
@@ -122,7 +125,17 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         cls.scripts_install_dir.cleanup()
 
     def setUp(self):
+        self.stdout_infd, self.stdout_outfd = os.pipe()
+        self.stdout_inbfile = os.fdopen(self.stdout_infd, "rb")
+        self.stdout_outfile = os.fdopen(self.stdout_outfd, "w")
+
+        self.stderr_infd, self.stderr_outfd = os.pipe()
+        self.stderr_inbfile = os.fdopen(self.stderr_infd, "rb")
+        self.stderr_outfile = os.fdopen(self.stderr_outfd, "w")
+
         self.dh = self.DHClass()
+        self.dh.stdout = self.stdout_outfile
+        self.dh.stderr = self.stderr_outfile
 
         test_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(test_dir)
@@ -141,6 +154,12 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         os.chdir(self.old_cwd)
 
         self.tmp_dir.cleanup()
+
+        self.stderr_outfile.close()
+        self.stderr_inbfile.close()
+
+        self.stdout_outfile.close()
+        self.stdout_inbfile.close()
 
     def make_directory_in_tmp(self, name):
         path = os.path.join(self.tmp_dir.name, name)

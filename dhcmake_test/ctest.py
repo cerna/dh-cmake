@@ -78,6 +78,9 @@ class MockCDashServerHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.flush_headers()
 
+    def log_message(self, format, *args):
+        pass
+
 
 class MockCDashServer(http.server.HTTPServer):
     def __init__(self, server_address):

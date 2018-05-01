@@ -3,7 +3,6 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import os.path
-import subprocess
 import tempfile
 
 from dhcmake import common, cmake
@@ -61,16 +60,13 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
     def setup_do_cmake_install(self):
         self.build_dir = self.make_directory_in_tmp("build")
 
-        subprocess.run(
+        self.run_cmd(
             [
                 "cmake", "-G", "Unix Makefiles", "-DCMAKE_INSTALL_PREFIX=/usr",
                 self.src_dir,
-            ], cwd=self.build_dir, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, check=True)
+            ], cwd=self.build_dir)
 
-        subprocess.run(["make"], cwd=self.build_dir,
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                       check=True)
+        self.run_cmd(["make"], cwd=self.build_dir)
 
         self.install_all_dir = self.make_directory_in_tmp("install-all")
         self.install_lib_dir = self.make_directory_in_tmp("install-lib")
@@ -81,8 +77,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.dh.parse_args([])
 
         self.dh.do_cmake_install(self.build_dir,
-                                 self.install_all_dir,
-                                 suppress_output=True)
+                                 self.install_all_dir)
 
         self.assertFileTreeEqual(self.libraries_files | self.headers_files \
                                  | self.namelinks_files, self.install_all_dir)
@@ -93,8 +88,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
         self.dh.do_cmake_install(
             os.path.join(self.build_dir, "lib1"),
-            self.install_all_dir,
-            suppress_output=True)
+            self.install_all_dir)
 
         self.assertFileTreeEqual(set(self.replace_arch_in_paths({
             "usr",
@@ -113,8 +107,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
         self.dh.do_cmake_install(self.build_dir,
                                  self.install_dev_dir,
-                                 component="Headers",
-                                 suppress_output=True)
+                                 component="Headers")
 
         self.assertFileTreeEqual(self.headers_files, self.install_dev_dir)
 
@@ -144,16 +137,13 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
         os.mkdir(self.dh.get_build_directory())
 
-        subprocess.run(
+        self.run_cmd(
             [
                 "cmake", "-G", "Unix Makefiles", "-DCMAKE_INSTALL_PREFIX=/usr",
                 self.src_dir,
-            ], cwd=self.dh.get_build_directory(), stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, check=True)
+            ], cwd=self.dh.get_build_directory())
 
-        subprocess.run(["make"], cwd=self.dh.get_build_directory(),
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                       check=True)
+        self.run_cmd(["make"], cwd=self.dh.get_build_directory())
 
         self.dh.install(args)
 
@@ -178,9 +168,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         if case:
             env["DH_CMAKE_CASE"] = case
 
-        subprocess.run(["fakeroot", "debian/rules", rule], env=env,
-                       stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL, check=True)
+        self.run_cmd(["fakeroot", "debian/rules", rule], env=env)
 
     def test_run_debian_rules(self):
         self.run_debian_rules("build")

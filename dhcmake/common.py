@@ -43,6 +43,10 @@ class DHCommon:
     def __init__(self):
         self.options = argparse.Namespace()
         self.options.type = "both"
+        self.stdout = sys.stdout
+        self.stdout_b = sys.stdout
+        self.stderr = sys.stderr
+        self.stderr_b = sys.stderr
 
     def _parse_args(self, parser, args, known):
         if known:
@@ -107,17 +111,13 @@ class DHCommon:
 
         self._parse_args(parser, args, False)
 
-    def do_cmd(self, args, env=None, cwd=None, suppress_output=False):
+    def do_cmd(self, args, env=None, cwd=None):
         if self.options.verbose:
             print_args = (format_arg_for_print(a) for a in args)
-            print("\t" + " ".join(print_args))
+            print("\t" + " ".join(print_args), file=self.stdout)
         if not self.options.no_act:
-            if suppress_output:
-                stdout = stderr = subprocess.PIPE
-            else:
-                stdout = stderr = None
-            subprocess.run(args, stdout=stdout, stderr=stderr, env=env,
-                           cwd=cwd, check=True)
+            subprocess.run(args, stdout=self.stdout, stderr=self.stderr,
+                           env=env, cwd=cwd, check=True)
 
     def get_packages(self):
         with open("debian/control", "r") as f:

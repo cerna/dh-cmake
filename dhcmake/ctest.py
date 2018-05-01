@@ -45,7 +45,7 @@ class DHCTest(common.DHCommon):
         return pkg_resources.resource_filename(__name__,
             "dh_ctest_driver.cmake")
 
-    def do_ctest_step(self, step, cmd=None, suppress_output=False):
+    def do_ctest_step(self, step, cmd=None):
         dashboard_model = get_deb_ctest_option("model")
         if dashboard_model is None:
             if cmd is not None:
@@ -63,7 +63,7 @@ class DHCTest(common.DHCommon):
             if cmd:
                 args.append("-DDH_CTEST_RUN_CMD:STRING=" \
                     + format_args_for_ctest([cmd, *self.parsed_args]))
-            self.do_cmd(args, suppress_output=suppress_output)
+            self.do_cmd(args)
 
     def start(self, args=None):
         self.parse_args(args)
