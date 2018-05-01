@@ -122,6 +122,8 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         cls.scripts_install_dir.cleanup()
 
     def setUp(self):
+        self.dh = self.DHClass()
+
         test_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(test_dir)
         test_data_dir = os.path.join(root_dir, "test_data")

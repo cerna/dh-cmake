@@ -11,6 +11,8 @@ from dhcmake_test import *
 
 
 class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
+    DHClass = cmake.DHCMake
+
     libraries_files = set(KWTestCaseBase.replace_arch_in_paths({
         "usr",
         "usr/lib",
@@ -56,13 +58,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         "usr/share/doc/libdh-cmake-test-dev/changelog.Debian.gz",
     }
 
-    def setUp(self):
-        super().setUp()
-
-        self.dhcmake = cmake.DHCMake()
-
     def setup_do_cmake_install(self):
-
         self.build_dir = self.make_directory_in_tmp("build")
 
         subprocess.run(
@@ -82,20 +78,20 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
     def test_cmake_install_all(self):
         self.setup_do_cmake_install()
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
-        self.dhcmake.do_cmake_install(self.build_dir,
-                                      self.install_all_dir,
-                                      suppress_output=True)
+        self.dh.do_cmake_install(self.build_dir,
+                                 self.install_all_dir,
+                                 suppress_output=True)
 
         self.assertFileTreeEqual(self.libraries_files | self.headers_files \
                                  | self.namelinks_files, self.install_all_dir)
 
     def test_cmake_install_subdirectory(self):
         self.setup_do_cmake_install()
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
-        self.dhcmake.do_cmake_install(
+        self.dh.do_cmake_install(
             os.path.join(self.build_dir, "lib1"),
             self.install_all_dir,
             suppress_output=True)
@@ -113,53 +109,53 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
     def test_cmake_install_one_component(self):
         self.setup_do_cmake_install()
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
-        self.dhcmake.do_cmake_install(self.build_dir,
-                                      self.install_dev_dir,
-                                      component="Headers",
-                                      suppress_output=True)
+        self.dh.do_cmake_install(self.build_dir,
+                                 self.install_dev_dir,
+                                 component="Headers",
+                                 suppress_output=True)
 
         self.assertFileTreeEqual(self.headers_files, self.install_dev_dir)
 
     def test_get_cmake_components(self):
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
         self.assertEqual([
             "Libraries",
-        ], self.dhcmake.get_cmake_components("libdh-cmake-test"))
+        ], self.dh.get_cmake_components("libdh-cmake-test"))
 
     def test_get_cmake_components_executable(self):
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
         self.assertEqual([
             "Headers",
             "Namelinks",
-        ], self.dhcmake.get_cmake_components("libdh-cmake-test-dev"))
+        ], self.dh.get_cmake_components("libdh-cmake-test-dev"))
 
     def test_get_cmake_components_noexist(self):
-        self.dhcmake.parse_args([])
+        self.dh.parse_args([])
 
-        self.assertEqual([], self.dhcmake.get_cmake_components(
+        self.assertEqual([], self.dh.get_cmake_components(
             "libdh-cmake-test-doc"))
 
     def do_dh_cmake_install(self, args):
-        self.dhcmake.parse_args(args)
+        self.dh.parse_args(args)
 
-        os.mkdir(self.dhcmake.get_build_directory())
+        os.mkdir(self.dh.get_build_directory())
 
         subprocess.run(
             [
                 "cmake", "-G", "Unix Makefiles", "-DCMAKE_INSTALL_PREFIX=/usr",
                 self.src_dir,
-            ], cwd=self.dhcmake.get_build_directory(), stdout=subprocess.PIPE,
+            ], cwd=self.dh.get_build_directory(), stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, check=True)
 
-        subprocess.run(["make"], cwd=self.dhcmake.get_build_directory(),
+        subprocess.run(["make"], cwd=self.dh.get_build_directory(),
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                        check=True)
 
-        self.dhcmake.install(args)
+        self.dh.install(args)
 
     def test_dh_cmake_install_default(self):
         self.do_dh_cmake_install([])

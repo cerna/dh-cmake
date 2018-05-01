@@ -2,15 +2,20 @@
 # BSD 3-Clause license. See top-level LICENSE file or
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
-import io
+import os.path
 
-from dhcmake import deb822
-from dhcmake_test import DebianSourcePackageTestCaseBase
+from dhcmake import common, deb822
+from dhcmake_test import KWTestCaseBase
 
 
-class Deb822TestCase(DebianSourcePackageTestCaseBase):
+class Deb822TestCase(KWTestCaseBase):
     def test_control(self):
-        with self.open("debian/control", "r") as f:
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(test_dir)
+        test_data_dir = os.path.join(root_dir, "test_data")
+
+        with open(os.path.join(test_data_dir, "debian_pkg/debian/control"), \
+                "r") as f:
             source, packages = deb822.read_control(f)
 
         self.assertEqual("dh-cmake-test", source["source"])
