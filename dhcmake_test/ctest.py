@@ -268,9 +268,20 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertFilesSubmittedEqual(set())
 
-    def test_submit_experimental(self):
+    def test_submit_experimental_nosubmit(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
+            self.dhctest.start([])
+            self.dhctest.configure([])
+            self.dhctest.build([])
+            self.dhctest.test([])
+            self.dhctest.submit([])
+
+            self.assertFilesSubmittedEqual(set())
+
+    def test_submit_experimental_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
             self.dhctest.start([])
             self.dhctest.configure([])
             self.dhctest.build([])

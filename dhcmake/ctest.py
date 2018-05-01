@@ -83,7 +83,8 @@ class DHCTest(common.DHCommon):
 
     def submit(self, args=None):
         self.parse_args(args)
-        self.do_ctest_step("submit")
+        if get_deb_ctest_option("submit"):
+            self.do_ctest_step("submit")
 
 
 def start():
