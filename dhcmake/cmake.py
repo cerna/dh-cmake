@@ -22,7 +22,7 @@ class DHCMake(common.DHCommon):
             args += ["-DCOMPONENT=" + component]
         args += ["-P", os.path.join(builddir, "cmake_install.cmake")]
         env = os.environ.copy()
-        env["DESTDIR"] = destdir
+        env["DESTDIR"] = os.path.abspath(destdir)
         self.do_cmd(args, env=env)
 
     def install(self, args=None):
