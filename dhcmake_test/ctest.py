@@ -164,6 +164,15 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileExists(os.path.join(self.dh.get_build_directory(),
                                            "CMakeCache.txt"))
 
+    def test_configure_none_bad(self):
+        self.dh.start([])
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_CONFIGURE:BOOL=ON"])
+
+        self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
+        self.assertFileExists(os.path.join(self.dh.get_build_directory(),
+                                           "CMakeCache.txt"))
+
     def test_configure_experimental(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
@@ -209,6 +218,18 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileExists(os.path.join(self.dh.get_build_directory(),
                                            "libdh-cmake-test.so"))
 
+    def test_build_none_bad(self):
+        self.dh.start([])
+        self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_BUILD:BOOL=ON"])
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.dh.build([])
+
+        self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
+        self.assertFileExists(os.path.join(self.dh.get_build_directory(),
+                                           "CMakeCache.txt"))
+        self.assertFileNotExists(os.path.join(self.dh.get_build_directory(),
+                                              "libdh-cmake-test.so"))
+
     def test_build_experimental(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
@@ -226,24 +247,24 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.dh.start([])
         self.dh.configure([])
         self.dh.build([])
+        self.dh.test([])
+
+        self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
+
+    def test_test_none_bad(self):
+        self.dh.start([])
+        self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
+        self.dh.build([])
         with self.assertRaises(subprocess.CalledProcessError):
             self.dh.test([])
 
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
 
-    def test_test_none_nobad(self):
-        self.dh.start([])
-        self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=OFF"])
-        self.dh.build([])
-        self.dh.test([])
-
-        self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
-
-    def test_test_experimental(self):
+    def test_test_experimental_bad(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
             self.dh.start([])
-            self.dh.configure([])
+            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
             self.dh.build([])
             self.dh.test([])
             date = self.get_testing_tag_date()

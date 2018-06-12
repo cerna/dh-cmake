@@ -39,7 +39,17 @@ endif()
 
 add_test(TestTrue true)
 
-option(DH_CMAKE_ENABLE_BAD_TEST "Enable bad test" ON)
+option(DH_CMAKE_ENABLE_BAD_CONFIGURE "Enable bad configure" OFF)
+if(DH_CMAKE_ENABLE_BAD_CONFIGURE)
+  message(FATAL_ERROR "Bad configure enabled")
+endif()
+
+option(DH_CMAKE_ENABLE_BAD_BUILD "Enable bad build" OFF)
+if(DH_CMAKE_ENABLE_BAD_BUILD)
+  add_custom_target(badtarget ALL COMMAND false)
+endif()
+
+option(DH_CMAKE_ENABLE_BAD_TEST "Enable bad test" OFF)
 if(DH_CMAKE_ENABLE_BAD_TEST)
   add_test(TestFalse false)
 endif()
