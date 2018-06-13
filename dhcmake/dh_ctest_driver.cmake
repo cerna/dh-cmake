@@ -5,20 +5,42 @@
 set(CTEST_SOURCE_DIRECTORY "${DH_CTEST_SRCDIR}")
 set(CTEST_BINARY_DIRECTORY "${DH_CTEST_CTESTDIR}")
 
+function(step_submit)
+  if(DH_CTEST_STEP_SUBMIT)
+    ctest_submit(PARTS ${ARGN})
+  endif()
+endfunction()
+
 if(DH_CTEST_STEP STREQUAL start)
+
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}")
+
 elseif(DH_CTEST_STEP STREQUAL configure)
+
   set(CTEST_CONFIGURE_COMMAND "${DH_CTEST_RUN_CMD}")
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
   ctest_configure(BUILD "${DH_CTEST_TOPDIR}")
+
+  step_submit(Configure)
+
 elseif(DH_CTEST_STEP STREQUAL build)
+
   set(CTEST_BUILD_COMMAND "${DH_CTEST_RUN_CMD}")
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
   ctest_build(BUILD "${DH_CTEST_TOPDIR}")
+
+  step_submit(Build)
+
 elseif(DH_CTEST_STEP STREQUAL test)
+
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
   ctest_test(BUILD "${DH_CTEST_BUILDDIR}")
+
+  step_submit(Test)
+
 elseif(DH_CTEST_STEP STREQUAL submit)
+
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
   ctest_submit()
+
 endif()

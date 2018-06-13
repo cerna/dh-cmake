@@ -190,6 +190,27 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                 os.path.join(self.dh.get_build_directory(),
                              "testflag.txt"))
 
+            self.assertFilesSubmittedEqual({})
+
+    def test_configure_experimental_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Configure.xml"))
+
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Build.xml"))
+
+            self.assertFileNotExists(
+                os.path.join(self.dh.get_build_directory(),
+                             "testflag.txt"))
+
+            self.assertFilesSubmittedEqual({"Configure"})
+
     def test_configure_experimental_args(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
@@ -206,6 +227,38 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertFileExists(
                 os.path.join(self.dh.get_build_directory(),
                              "testflag.txt"))
+
+    def test_configure_experimental_bad(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start([])
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_CONFIGURE:BOOL=ON"])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Configure.xml"))
+
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Build.xml"))
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_configure_experimental_bad_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_CONFIGURE:BOOL=ON"])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Configure.xml"))
+
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Build.xml"))
+
+            self.assertFilesSubmittedEqual({"Configure"})
 
     def test_build_none(self):
         self.dh.start([])
@@ -243,6 +296,55 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
                                                   date, "Test.xml"))
 
+            self.assertFilesSubmittedEqual({})
+
+    def test_build_experimental_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure([])
+            self.dh.build([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Build.xml"))
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Test.xml"))
+
+            self.assertFilesSubmittedEqual({"Configure", "Build"})
+
+    def test_build_experimental_bad(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start([])
+            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_BUILD:BOOL=ON"])
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.dh.build([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Build.xml"))
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Test.xml"))
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_build_experimental_bad_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_BUILD:BOOL=ON"])
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.dh.build([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Build.xml"))
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing",
+                                                  date, "Test.xml"))
+
+            self.assertFilesSubmittedEqual({"Configure", "Build"})
+
     def test_test_none(self):
         self.dh.start([])
         self.dh.configure([])
@@ -259,6 +361,50 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.dh.test([])
 
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
+
+    def test_test_experimental(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start([])
+            self.dh.configure([])
+            self.dh.build([])
+            self.dh.test([])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            tests = tree.findall("Testing/Test")
+            self.assertEqual(1, len(tests))
+
+            test_true = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestTrue']"))
+            self.assertEqual("passed", test_true.get("Status"))
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_test_experimental_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure([])
+            self.dh.build([])
+            self.dh.test([])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            tests = tree.findall("Testing/Test")
+            self.assertEqual(1, len(tests))
+
+            test_true = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestTrue']"))
+            self.assertEqual("passed", test_true.get("Status"))
+
+            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
 
     def test_test_experimental_bad(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
@@ -283,6 +429,34 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             test_false = self.get_single_element(tree.findall(
                 "Testing/Test[Name='TestFalse']"))
             self.assertEqual("failed", test_false.get("Status"))
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_test_experimental_bad_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
+            self.dh.build([])
+            self.dh.test([])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            tests = tree.findall("Testing/Test")
+            self.assertEqual(2, len(tests))
+
+            test_true = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestTrue']"))
+            self.assertEqual("passed", test_true.get("Status"))
+
+            test_false = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestFalse']"))
+            self.assertEqual("failed", test_false.get("Status"))
+
+            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
 
     def test_submit_none(self):
         self.dh.start([])

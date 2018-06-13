@@ -63,6 +63,8 @@ class DHCTest(common.DHCommon):
             if cmd:
                 args.append("-DDH_CTEST_RUN_CMD:STRING=" \
                     + format_args_for_ctest([cmd, *self.parsed_args]))
+            if get_deb_ctest_option("submit"):
+                args.append("-DDH_CTEST_STEP_SUBMIT:BOOL=ON")
             self.do_cmd(args)
 
     def start(self, args=None):
