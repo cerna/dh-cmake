@@ -61,12 +61,16 @@ class DHCommon:
 
     def parse_args(self, args=None):
         parser = argparse.ArgumentParser()
+        self.make_arg_parser(parser)
 
         if args is None:
             self.parsed_args = sys.argv[1:]
         else:
             self.parsed_args = list(args)
 
+        self._parse_args(parser, args, False)
+
+    def make_arg_parser(self, parser):
         # Required arguments
         parser.add_argument(
             "-v", "--verbose", action="store_true", help="Verbose output")
@@ -106,10 +110,6 @@ class DHCommon:
             "-B", "--builddirectory", action="store",
             help="Build directory for out of source building",
             default="obj-" + dpkg_architecture()["DEB_HOST_GNU_TYPE"])
-        parser.add_argument(
-            "extra_args", nargs="*")
-
-        self._parse_args(parser, args, False)
 
     def do_cmd(self, args, env=None, cwd=None):
         if self.options.verbose:

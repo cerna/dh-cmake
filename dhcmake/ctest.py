@@ -41,6 +41,15 @@ def get_deb_ctest_option(name):
 
 
 class DHCTest(common.DHCommon):
+    def make_arg_parser(self, parser):
+        super().make_arg_parser(parser)
+
+        parser.add_argument(
+            "--no-submit", action="store_true",
+            help="Don't submit after each part")
+        parser.add_argument(
+            "extra_args", nargs="*")
+
     def get_dh_ctest_driver(self):
         return pkg_resources.resource_filename(__name__,
             "dh_ctest_driver.cmake")
@@ -49,7 +58,7 @@ class DHCTest(common.DHCommon):
         dashboard_model = get_deb_ctest_option("model")
         if dashboard_model is None:
             if cmd is not None:
-                self.do_cmd([cmd, *self.parsed_args])
+                self.do_cmd([cmd, *self.options.extra_args])
         else:
             args = [
                 "ctest", "-S", self.get_dh_ctest_driver(),
@@ -62,8 +71,8 @@ class DHCTest(common.DHCommon):
             ]
             if cmd:
                 args.append("-DDH_CTEST_RUN_CMD:STRING=" \
-                    + format_args_for_ctest([cmd, *self.parsed_args]))
-            if get_deb_ctest_option("submit"):
+                    + format_args_for_ctest([cmd, *self.options.extra_args]))
+            if get_deb_ctest_option("submit") and not self.options.no_submit:
                 args.append("-DDH_CTEST_STEP_SUBMIT:BOOL=ON")
             self.do_cmd(args)
 
