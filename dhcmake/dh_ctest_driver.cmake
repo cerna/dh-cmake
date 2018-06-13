@@ -5,6 +5,14 @@
 set(CTEST_SOURCE_DIRECTORY "${DH_CTEST_SRCDIR}")
 set(CTEST_BINARY_DIRECTORY "${DH_CTEST_CTESTDIR}")
 
+if(DEFINED DH_CTEST_SITE)
+  set(CTEST_SITE "${DH_CTEST_SITE}")
+endif()
+
+if(DEFINED DH_CTEST_BUILD)
+  set(CTEST_BUILD_NAME "${DH_CTEST_BUILD}")
+endif()
+
 function(step_submit)
   if(DH_CTEST_STEP_SUBMIT)
     ctest_submit(PARTS ${ARGN})

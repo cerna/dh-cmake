@@ -74,6 +74,15 @@ class DHCTest(common.DHCommon):
                     + format_args_for_ctest([cmd, *self.options.extra_args]))
             if get_deb_ctest_option("submit") and not self.options.no_submit:
                 args.append("-DDH_CTEST_STEP_SUBMIT:BOOL=ON")
+
+            site = get_deb_ctest_option("site")
+            if isinstance(site, str):
+                args.append("-DDH_CTEST_SITE:STRING=" + site)
+
+            build = get_deb_ctest_option("build")
+            if isinstance(build, str):
+                args.append("-DDH_CTEST_BUILD:STRING=" + build)
+
             self.do_cmd(args)
 
     def start(self, args=None):

@@ -192,6 +192,30 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
             self.assertFilesSubmittedEqual({})
 
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Configure.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            self.assertEqual("(empty)", tree.attrib["Name"])
+            self.assertEqual("(empty)", tree.attrib["BuildName"])
+
+    def test_configure_experimental_site_build_names(self):
+        with PushEnvironmentVariable(
+                "DEB_CTEST_OPTIONS",
+                "model=Experimental site=debtest build=debian-cmake-test"):
+            self.dh.start([])
+            self.dh.configure([])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Configure.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            self.assertEqual("debtest", tree.attrib["Name"])
+            self.assertEqual("debian-cmake-test", tree.attrib["BuildName"])
+
     def test_configure_experimental_submit(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental submit"):
