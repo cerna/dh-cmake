@@ -150,29 +150,34 @@ development and trying to achieve Debian policy compliance. It is designed to
 monitor the health of the project when being built in a Debian environment. It
 is not primarily intended for use in production packages.
 
-`--with ctest` adds five new commands to the Debhelper `build` sequence:
+`--with ctest` adds four new commands to the Debhelper `build` sequence:
 
 * `dh_ctest_start`
 * `dh_ctest_configure`
 * `dh_ctest_build`
 * `dh_ctest_test`
-* `dh_ctest_submit`
 
 By default, the `configure`, `build`, and `test` steps are simple wrappers
-around their `dh_auto_*` counterparts, and the `start` and `submit` steps do
-nothing. However, they recognize a new environment variable,
-`DEB_CTEST_OPTIONS`, which can be used to activate CTest's dashboard mode.
-To activate dashboard mode, do the following:
+around their `dh_auto_*` counterparts, and the `start` step does nothing.
+However, they recognize a new environment variable, `DEB_CTEST_OPTIONS`, which
+can be used to activate CTest's dashboard mode. To activate dashboard mode, do
+the following:
 
 ```bash
 DEB_CTEST_OPTIONS="model=Experimental submit" dpkg-buildpackage
 ```
 
 The `model` argument will set the CTest dashboard model to "Experimental". You
-can also set it to "Continuous" or "Nightly". The `submit` argument tells the
-`dh_ctest_submit` command to submit the results to CDash (it does not submit by
+can also set it to "Continuous" or "Nightly". The `submit` argument tells each
+`dh_ctest_*` command to submit its own results to CDash (it does not submit by
 default, due to the fact that the package may be building in an environment
 without internet access.)
+
+When used without any options, the `configure`, `build`, and `test` steps each
+submit their own results to CDash upon completion, but you can disable this
+behavior by passing a `--no-submit` option to them. You can also submit results
+explicitly with another optional command, `dh_ctest_submit`, which is not
+included in `--with ctest` by default.
 
 Note that the steps above correspond closely to CTest's
 [Dashboard Client Steps](https://cmake.org/cmake/help/latest/manual/ctest.1.html#dashboard-client-steps).
@@ -248,10 +253,16 @@ because of the `EXAMPLE_RUN_BAD_TEST` option. To activate it, change your
         dh $@ --buildsystem=cmake --with cmake --with ctest
 
 override_dh_ctest_configure:
-        dh_ctest_configure -- -DEXAMPLE_RUN_BAD_TEST:BOOL=ON
+        dh_ctest_configure -- -- -DEXAMPLE_RUN_BAD_TEST:BOOL=ON
 ```
 
 Now `dh_ctest_configure` will enable the bad test.
+
+Note that there are two `--` arguments in the command above. This is because
+`dh_ctest_configure` invokes `dh_auto_configure` under the hood, and everything
+after the first `--` argument gets passed to `dh_auto_configure`.
+`dh_auto_configure` in turn invokes CMake, which is what the second `--`
+argument is for - everything after it gets passed to CMake.
 
 Note: in the default mode, because `dh_ctest_test` simply calls `dh_auto_test`,
 it will still fail if any of the tests fail. However, in dashboard mode, CTest
@@ -264,8 +275,8 @@ development even if some of the tests fail.
 CTest and CDash are designed to aggregate test results from many machines onto
 a single dashboard, to enable developers to easily monitor the health of a
 software project on a variety of different platforms. However, privacy is also
-very important, and as mentioned above, `dh_ctest_submit` will not attempt to
-submit results to a CDash server unless `DEB_CTEST_OPTIONS` has both `model`
+very important, and as mentioned above, `dh_ctest_*` commands will not attempt
+to submit results to a CDash server unless `DEB_CTEST_OPTIONS` has both `model`
 AND `submit` activated. The `ctest` sequence will NEVER perform internet access
 without your consent. The `dh-cmake` test suite has tests to make sure
 `dh_ctest_submit` behaves properly. If `dh_ctest_submit` ever performs a rogue
