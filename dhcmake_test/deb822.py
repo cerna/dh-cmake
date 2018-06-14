@@ -20,16 +20,28 @@ class Deb822TestCase(KWTestCaseBase):
 
         self.assertEqual("dh-cmake-test", source["source"])
 
-        self.assertEqual(3, len(packages))
+        self.assertEqual(6, len(packages))
 
         package = packages[0]
         self.assertEqual("libdh-cmake-test", package["package"])
-        self.assertEqual("any", package["architecture"])
+        self.assertEqual(["any"], package.architecture)
 
         package = packages[1]
         self.assertEqual("libdh-cmake-test-dev", package["package"])
-        self.assertEqual("any", package["architecture"])
+        self.assertEqual(["any"], package.architecture)
 
         package = packages[2]
         self.assertEqual("libdh-cmake-test-doc", package["package"])
-        self.assertEqual("all", package["architecture"])
+        self.assertEqual(["all"], package.architecture)
+
+        package = packages[3]
+        self.assertEqual("libdh-cmake-test-extra-32", package["package"])
+        self.assertEqual(["mips"], package.architecture)
+
+        package = packages[4]
+        self.assertEqual("libdh-cmake-test-extra-64", package["package"])
+        self.assertEqual(["mips64"], package.architecture)
+
+        package = packages[5]
+        self.assertEqual("libdh-cmake-test-extra-both", package["package"])
+        self.assertEqual(["mips", "mips64"], package.architecture)

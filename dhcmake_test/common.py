@@ -4,12 +4,21 @@
 
 from unittest import skip
 
-from dhcmake import common
+from dhcmake import common, arch
 from dhcmake_test import *
 
 
 class DHCommonTestCase(DebianSourcePackageTestCaseBase):
     DHClass = common.DHCommon
+
+    def setUp(self):
+        super().setUp()
+        self.deb_host_arch_old = arch.dpkg_architecture()["DEB_HOST_ARCH"]
+        arch.dpkg_architecture()["DEB_HOST_ARCH"] = "mips"
+
+    def tearDown(self):
+        arch.dpkg_architecture()["DEB_HOST_ARCH"] = self.deb_host_arch_old
+        super().tearDown()
 
     def check_packages(self, expected_packages):
         self.assertEqual(expected_packages, set(self.dh.get_packages()))
@@ -35,6 +44,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test",
             "libdh-cmake-test-dev",
             "libdh-cmake-test-doc",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_whitelist_short(self):
@@ -61,6 +72,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
         self.check_packages({
             "libdh-cmake-test",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_blacklist_long(self):
@@ -69,6 +82,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
         self.check_packages({
             "libdh-cmake-test",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_arch_short(self):
@@ -77,6 +92,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.check_packages({
             "libdh-cmake-test",
             "libdh-cmake-test-dev",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_arch_long(self):
@@ -85,6 +102,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.check_packages({
             "libdh-cmake-test",
             "libdh-cmake-test-dev",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_arch_deprecated(self):
@@ -93,6 +112,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.check_packages({
             "libdh-cmake-test",
             "libdh-cmake-test-dev",
+            "libdh-cmake-test-extra-32",
+            "libdh-cmake-test-extra-both",
         })
 
     def test_get_packages_indep_short(self):
@@ -171,7 +192,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.dh.parse_args([])
 
         self.assertEqual(
-            "obj-" + common.dpkg_architecture()["DEB_HOST_GNU_TYPE"],
+            "obj-" + arch.dpkg_architecture()["DEB_HOST_GNU_TYPE"],
             self.dh.get_build_directory())
 
     def test_build_directory_short(self):

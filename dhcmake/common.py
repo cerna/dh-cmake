@@ -8,24 +8,7 @@ import os.path
 import subprocess
 import sys
 
-from dhcmake import deb822
-
-
-_dpkg_architecture_values = None
-
-
-def dpkg_architecture():
-    global _dpkg_architecture_values
-    if _dpkg_architecture_values is None:
-        _dpkg_architecture_values = dict()
-        proc = subprocess.run(["dpkg-architecture"], stdout=subprocess.PIPE)
-        output = proc.stdout.decode()
-        for line in output.split("\n"):
-            if line:
-                key, value = line.split("=", maxsplit=1)
-                _dpkg_architecture_values[key] = value
-
-    return _dpkg_architecture_values
+from dhcmake import deb822, arch
 
 
 def format_arg_for_print(arg):
@@ -109,7 +92,8 @@ class DHCommon:
         parser.add_argument(
             "-B", "--builddirectory", action="store",
             help="Build directory for out of source building",
-            default="obj-" + dpkg_architecture()["DEB_HOST_GNU_TYPE"])
+            default="obj-"
+                + arch.dpkg_architecture()["DEB_HOST_GNU_TYPE"])
 
     def do_cmd(self, args, env=None, cwd=None):
         if self.options.verbose:
@@ -125,22 +109,32 @@ class DHCommon:
 
         result = []
 
+        deb_host_arch = arch.dpkg_architecture()["DEB_HOST_ARCH"]
+
         for p in packages:
             name = p["package"]
             if self.options.package:
-                if name in self.options.package:
+                if name in self.options.package and \
+                        (p.architecture == ["all"] or \
+                            arch.debarch_contains(deb_host_arch,
+                                                  p.architecture)):
                     result.append(name)
             elif self.options.no_package:
-                if name not in self.options.no_package:
+                if name not in self.options.no_package and \
+                        (p.architecture == ["all"] or \
+                            arch.debarch_contains(deb_host_arch,
+                                                  p.architecture)):
                     result.append(name)
             elif self.options.type == "indep":
-                if p["architecture"] == "all":
+                if p.architecture == ["all"]:
                     result.append(name)
             elif self.options.type == "arch":
-                if p["architecture"] == "any":
+                if arch.debarch_contains(deb_host_arch, p.architecture):
                     result.append(name)
             elif self.options.type == "both":
-                result.append(name)
+                if p.architecture == ["all"] or \
+                        arch.debarch_contains(deb_host_arch, p.architecture):
+                    result.append(name)
 
         return result
 

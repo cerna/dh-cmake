@@ -2,6 +2,8 @@
 # BSD 3-Clause license. See top-level LICENSE file or
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
+import re
+
 import debian.deb822
 
 
@@ -18,4 +20,6 @@ class ControlSource(debian.deb822.Deb822):
 
 
 class ControlPackage(debian.deb822.Deb822):
-    pass
+    @property
+    def architecture(self):
+        return re.split("\\s+", self["architecture"])

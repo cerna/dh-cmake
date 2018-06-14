@@ -12,3 +12,12 @@ Architecture: any
 
 Package: libdh-cmake-test-doc
 Architecture: all
+
+Package: libdh-cmake-test-extra-32
+Architecture: mips
+
+Package: libdh-cmake-test-extra-64
+Architecture: mips64
+
+Package: libdh-cmake-test-extra-both
+Architecture: mips mips64

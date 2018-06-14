@@ -10,6 +10,7 @@ import tempfile
 from unittest import TestCase
 
 import dhcmake.common
+import dhcmake.arch
 
 
 class VolatileNamedTemporaryFile:
@@ -65,7 +66,7 @@ class KWTestCaseBase(TestCase):
 
     @classmethod
     def replace_arch_in_paths(cls, paths):
-        return (p.format(arch=dhcmake.common \
+        return (p.format(arch=dhcmake.arch \
                 .dpkg_architecture()["DEB_HOST_GNU_TYPE"])
             for p in paths)
 
