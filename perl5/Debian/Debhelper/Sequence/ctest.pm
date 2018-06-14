@@ -16,6 +16,5 @@ insert_before("dh_auto_test", "dh_ctest_test");
 remove_command("dh_auto_test");
 
 insert_before("dh_ctest_configure", "dh_ctest_start");
-insert_after("dh_ctest_test", "dh_ctest_submit");
 
 1;
