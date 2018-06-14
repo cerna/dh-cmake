@@ -49,6 +49,11 @@ elseif(DH_CTEST_STEP STREQUAL test)
 elseif(DH_CTEST_STEP STREQUAL submit)
 
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
-  ctest_submit()
+
+  if(DEFINED DH_CTEST_SUBMIT_PARTS)
+    ctest_submit(PARTS ${DH_CTEST_SUBMIT_PARTS})
+  else()
+    ctest_submit()
+  endif()
 
 endif()

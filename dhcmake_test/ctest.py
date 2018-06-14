@@ -546,9 +546,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
     def test_submit_none(self):
         self.dh.start([])
-        self.dh.configure([])
-        self.dh.build([])
-        self.dh.test([])
+        self.dh.configure(["--no-submit"])
+        self.dh.build(["--no-submit"])
+        self.dh.test(["--no-submit"])
         self.dh.submit([])
 
         self.assertFilesSubmittedEqual(set())
@@ -557,9 +557,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
             self.dh.start([])
-            self.dh.configure([])
-            self.dh.build([])
-            self.dh.test([])
+            self.dh.configure(["--no-submit"])
+            self.dh.build(["--no-submit"])
+            self.dh.test(["--no-submit"])
             self.dh.submit([])
 
             self.assertFilesSubmittedEqual(set())
@@ -568,12 +568,23 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental submit"):
             self.dh.start([])
-            self.dh.configure([])
-            self.dh.build([])
-            self.dh.test([])
+            self.dh.configure(["--no-submit"])
+            self.dh.build(["--no-submit"])
+            self.dh.test(["--no-submit"])
             self.dh.submit([])
 
             self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+
+    def test_submit_experimental_submit_parts(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental submit"):
+            self.dh.start([])
+            self.dh.configure(["--no-submit"])
+            self.dh.build(["--no-submit"])
+            self.dh.test(["--no-submit"])
+            self.dh.submit(["--parts", "Configure", "Build"])
+
+            self.assertFilesSubmittedEqual({"Configure", "Build"})
 
     def test_run_debian_rules_none(self):
         self.run_debian_rules("build", "ctest")

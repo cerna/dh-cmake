@@ -42,9 +42,12 @@ class DHCommon:
             self.options.options = []
             self._parse_args(parser, options, True)
 
-    def parse_args(self, args=None):
+    def parse_args(self, args=None, make_arg_parser=None):
         parser = argparse.ArgumentParser()
-        self.make_arg_parser(parser)
+        if make_arg_parser:
+            make_arg_parser(parser)
+        else:
+            self.make_arg_parser(parser)
 
         if args is None:
             self.parsed_args = sys.argv[1:]

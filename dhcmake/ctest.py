@@ -83,6 +83,10 @@ class DHCTest(common.DHCommon):
             if isinstance(build, str):
                 args.append("-DDH_CTEST_BUILD:STRING=" + build)
 
+            if step == "submit" and self.options.parts:
+                args.append("-DDH_CTEST_SUBMIT_PARTS:STRING=" +
+                        ";".join(self.options.parts))
+
             self.do_cmd(args)
 
     def start(self, args=None):
@@ -101,8 +105,14 @@ class DHCTest(common.DHCommon):
         self.parse_args(args)
         self.do_ctest_step("test", "dh_auto_test")
 
+    def submit_make_arg_parser(self, parser):
+        super().make_arg_parser(parser)
+
+        parser.add_argument("--parts", action="store", nargs="*",
+                            help="Parts to submit to CDash")
+
     def submit(self, args=None):
-        self.parse_args(args)
+        self.parse_args(args, make_arg_parser=self.submit_make_arg_parser)
         if get_deb_ctest_option("submit"):
             self.do_ctest_step("submit")
 
