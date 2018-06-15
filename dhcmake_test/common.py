@@ -235,3 +235,32 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.dh.parse_args(["-O=-v"])
 
         self.assertTrue(self.dh.options.verbose)
+
+    def test_compat_valid(self):
+        self.assertEqual(1, self.dh.compat())
+
+    def test_compat_low(self):
+        with open("debian/dh-cmake.compat", "w") as f:
+            print(common.MIN_COMPAT - 1, file=f)
+
+        with self.assertRaises(
+                common.CompatError,
+                msg="Compat level %i too old (must be %i or newer)"
+                    % (common.MIN_COMPAT - 1, common.MIN_COMPAT)):
+            self.dh.compat()
+
+    def test_compat_high(self):
+        with open("debian/dh-cmake.compat", "w") as f:
+            print(common.MAX_COMPAT + 1, file=f)
+
+        with self.assertRaises(
+                common.CompatError,
+                msg="Compat level %i too new (must be %i or older)"
+                    % (common.MAX_COMPAT + 1, common.MAX_COMPAT)):
+            self.dh.compat()
+
+    def test_compat_missing(self):
+        os.unlink("debian/dh-cmake.compat")
+
+        with self.assertRaises(FileNotFoundError):
+            self.dh.compat()

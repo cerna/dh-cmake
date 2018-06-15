@@ -11,6 +11,14 @@ import sys
 from dhcmake import deb822, arch
 
 
+MIN_COMPAT = 1
+MAX_COMPAT = 1
+
+
+class CompatError(Exception):
+    pass
+
+
 def format_arg_for_print(arg):
     arg = arg.replace("\\", "\\\\")
     arg = arg.replace('"', '\\"')
@@ -30,6 +38,7 @@ class DHCommon:
         self.stdout_b = sys.stdout
         self.stderr = sys.stderr
         self.stderr_b = sys.stderr
+        self._compat = None
 
     def _parse_args(self, parser, args, known):
         if known:
@@ -41,6 +50,22 @@ class DHCommon:
             options = self.options.options
             self.options.options = []
             self._parse_args(parser, options, True)
+
+    def compat(self):
+        if self._compat is None:
+            with open("debian/dh-cmake.compat", "r") as f:
+                self._compat = int(f.read())
+
+            if self._compat < MIN_COMPAT:
+                raise CompatError(
+                        "Compat level %i too old (must be %i or newer)" %
+                            (self._compat, MIN_COMPAT))
+            elif self._compat > MAX_COMPAT:
+                raise CompatError(
+                        "Compat level %i too new (must be %i or older)" %
+                            (self._compat, MAX_COMPAT))
+
+        return self._compat
 
     def parse_args(self, args=None, make_arg_parser=None):
         parser = argparse.ArgumentParser()
