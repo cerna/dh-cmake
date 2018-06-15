@@ -25,6 +25,7 @@ class DHCMake(common.DHCommon):
         env["DESTDIR"] = os.path.abspath(destdir)
         self.do_cmd(args, env=env)
 
+    @common.DHEntryPoint
     def install(self, args=None):
         self.parse_args(args)
         for p in self.get_packages():

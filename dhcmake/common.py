@@ -30,6 +30,14 @@ def format_arg_for_print(arg):
         return arg
 
 
+def DHEntryPoint(func):
+    def wrapped(self, *args, **kargs):
+        self.compat()
+        return func(self, *args, **kargs)
+
+    return wrapped
+
+
 class DHCommon:
     def __init__(self):
         self.options = argparse.Namespace()

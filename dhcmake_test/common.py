@@ -264,3 +264,19 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
         with self.assertRaises(FileNotFoundError):
             self.dh.compat()
+
+
+class DHCommonCompatTestClass(common.DHCommon):
+    @common.DHEntryPoint
+    def test_command(self, args=None):
+        self.parse_args(args)
+        # Do nothing
+
+
+class DHCommonCompatTestCase(DebianSourcePackageTestCaseBase):
+    DHClass = DHCommonCompatTestClass
+
+    def test_compat_load(self):
+        self.assertIs(None, self.dh._compat)
+        self.dh.test_command([])
+        self.assertEqual(1, self.dh._compat)

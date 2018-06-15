@@ -89,18 +89,22 @@ class DHCTest(common.DHCommon):
 
             self.do_cmd(args)
 
+    @common.DHEntryPoint
     def start(self, args=None):
         self.parse_args(args)
         self.do_ctest_step("start")
 
+    @common.DHEntryPoint
     def configure(self, args=None):
         self.parse_args(args)
         self.do_ctest_step("configure", "dh_auto_configure")
 
+    @common.DHEntryPoint
     def build(self, args=None):
         self.parse_args(args)
         self.do_ctest_step("build", "dh_auto_build")
 
+    @common.DHEntryPoint
     def test(self, args=None):
         self.parse_args(args)
         self.do_ctest_step("test", "dh_auto_test")
@@ -111,6 +115,7 @@ class DHCTest(common.DHCommon):
         parser.add_argument("--parts", action="store", nargs="*",
                             help="Parts to submit to CDash")
 
+    @common.DHEntryPoint
     def submit(self, args=None):
         self.parse_args(args, make_arg_parser=self.submit_make_arg_parser)
         if get_deb_ctest_option("submit"):
