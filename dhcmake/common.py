@@ -131,10 +131,16 @@ class DHCommon:
             default="obj-"
                 + arch.dpkg_architecture()["DEB_HOST_GNU_TYPE"])
 
-    def do_cmd(self, args, env=None, cwd=None):
+    def print_cmd(self, args, cwd=None):
         if self.options.verbose:
+            args = list(args)
+            if cwd:
+                args = ["cd", cwd, "&&"] + args
             print_args = (format_arg_for_print(a) for a in args)
             print("\t" + " ".join(print_args), file=self.stdout)
+
+    def do_cmd(self, args, env=None, cwd=None):
+        self.print_cmd(args, cwd)
         if not self.options.no_act:
             subprocess.run(args, stdout=self.stdout, stderr=self.stderr,
                            env=env, cwd=cwd, check=True)
