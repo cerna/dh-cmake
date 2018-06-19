@@ -181,7 +181,9 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
         with self.dh.read_package_file(
                 "libdh-cmake-test", "cmake-components") as f:
-            self.assertEqual("Libraries\n", f.read())
+            self.assertEqual(
+                    "# This file tests both comments and blank lines\n\n"
+                    "Libraries\n", f.read())
         with self.dh.read_package_file(
                 "libdh-cmake-test-dev", "cmake-components") as f:
             self.assertEqual("Headers\nNamelinks\n", f.read())

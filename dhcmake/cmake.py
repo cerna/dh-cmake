@@ -3,6 +3,7 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import os.path
+import re
 
 from dhcmake import common
 
@@ -12,7 +13,7 @@ class DHCMake(common.DHCommon):
         opened_file = self.read_package_file(package, "cmake-components")
         if opened_file:
             with opened_file as f:
-                return [l.rstrip() for l in f]
+                return [l.rstrip() for l in f if not re.search("^($|#)", l)]
         else:
             return []
 
