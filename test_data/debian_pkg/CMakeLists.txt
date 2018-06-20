@@ -33,6 +33,7 @@ cpack_add_component_group(All
 cpack_add_component_group(Development
   DISPLAY_NAME "Development files"
   DESCRIPTION "Development files for the library"
+  PARENT_GROUP All
 )
 
 macro(declare_lib LIBNAME)

@@ -28,3 +28,54 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileNotExists("debian/.cpack/cpack-metadata.json")
         self.dh.generate([])
         self.assertFileExists("debian/.cpack/cpack-metadata.json")
+
+    def test_get_cpack_components(self):
+        self.dh.generate([])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual(
+                ["Libraries"],
+                self.dh.get_cpack_components("libdh-cmake-test")
+        )
+
+        with self.assertRaises(
+                ValueError,
+                msg="Invalid CPack components in libdh-cmake-test-extra-32"
+        ):
+            self.dh.get_cpack_components("libdh-cmake-test-extra-32")
+
+    def test_get_cpack_component_groups(self):
+        self.dh.generate([])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual(
+                ["Development"],
+                self.dh.get_cpack_component_groups("libdh-cmake-test-dev")
+        )
+
+        with self.assertRaises(
+                ValueError,
+                msg="Invalid CPack component groups "
+                    "in libdh-cmake-test-extra-32"
+        ):
+            self.dh.get_cpack_component_groups("libdh-cmake-test-extra-32")
+
+    def test_get_all_cpack_components_for_group(self):
+        self.dh.generate([])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual({"Headers", "Namelinks"},
+                self.dh.get_all_cpack_components_for_group("Development"))
+
+        self.assertEqual({"Libraries", "Headers", "Namelinks"},
+                self.dh.get_all_cpack_components_for_group("All"))
+
+    def test_get_all_cpack_components(self):
+        self.dh.generate([])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual({"Headers", "Namelinks"},
+                self.dh.get_all_cpack_components("libdh-cmake-test-dev"))
+
+        self.assertEqual({"Libraries"},
+                self.dh.get_all_cpack_components("libdh-cmake-test"))
