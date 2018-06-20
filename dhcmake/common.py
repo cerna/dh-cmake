@@ -145,38 +145,50 @@ class DHCommon:
             subprocess.run(args, stdout=self.stdout, stderr=self.stderr,
                            env=env, cwd=cwd, check=True)
 
-    def get_packages(self):
+    def get_all_packages(self):
         with open("debian/control", "r") as f:
             source, packages = deb822.read_control(f)
 
         result = []
 
-        deb_host_arch = arch.dpkg_architecture()["DEB_HOST_ARCH"]
-
         for p in packages:
             name = p["package"]
+            if p.architecture == ["all"]:
+                result.append((name, p, "indep"))
+            else:
+                result.append((name, p, "arch"))
+
+        return result
+
+    def get_compatible_packages(self):
+        deb_host_arch = arch.dpkg_architecture()["DEB_HOST_ARCH"]
+        result = []
+
+        for name, p, ptype in self.get_all_packages():
+            if ptype == "indep" or \
+                    arch.debarch_contains(deb_host_arch, p.architecture):
+                result.append((name, p, ptype))
+
+        return result
+
+    def get_packages(self):
+        result = []
+
+        for name, p, ptype in self.get_compatible_packages():
             if self.options.package:
-                if name in self.options.package and \
-                        (p.architecture == ["all"] or \
-                            arch.debarch_contains(deb_host_arch,
-                                                  p.architecture)):
+                if name in self.options.package:
                     result.append(name)
             elif self.options.no_package:
-                if name not in self.options.no_package and \
-                        (p.architecture == ["all"] or \
-                            arch.debarch_contains(deb_host_arch,
-                                                  p.architecture)):
+                if name not in self.options.no_package:
                     result.append(name)
             elif self.options.type == "indep":
-                if p.architecture == ["all"]:
+                if ptype == "indep":
                     result.append(name)
             elif self.options.type == "arch":
-                if arch.debarch_contains(deb_host_arch, p.architecture):
+                if ptype == "arch":
                     result.append(name)
             elif self.options.type == "both":
-                if p.architecture == ["all"] or \
-                        arch.debarch_contains(deb_host_arch, p.architecture):
-                    result.append(name)
+                result.append(name)
 
         return result
 
