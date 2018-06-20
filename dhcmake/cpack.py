@@ -125,6 +125,17 @@ class DHCPack(common.DHCommon):
         ]
         self.do_cmd(cmd_args)
 
+    @common.DHEntryPoint
+    def substvars(self, args=None):
+        self.parse_args(args)
+        self.read_cpack_metadata()
+
+        for package in self.get_packages():
+            depends = ", ".join(dep + " (= ${binary:Version})" for dep in
+                    sorted(self.get_package_dependencies(package)))
+            if depends:
+                self.write_substvar("cpack:Depends", depends, package)
+
 
 def generate():
     dhcpack = DHCPack()

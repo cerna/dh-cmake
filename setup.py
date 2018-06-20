@@ -30,6 +30,7 @@ setup(
             "dh_ctest_test=dhcmake.ctest:test",
             "dh_ctest_submit=dhcmake.ctest:submit",
             "dh_cpack_generate=dhcmake.cpack:generate",
+            "dh_cpack_substvars=dhcmake.cpack:substvars",
         ],
     },
     package_data={

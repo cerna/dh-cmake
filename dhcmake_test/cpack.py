@@ -94,3 +94,11 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertEqual({"libdh-cmake-test"},
                 self.dh.get_package_dependencies("libdh-cmake-test-dev"))
+
+    def test_substvars(self):
+        self.dh.generate([])
+        self.dh.substvars([])
+
+        with open("debian/libdh-cmake-test-dev.substvars", "r") as f:
+            self.assertEqual("cpack:Depends=libdh-cmake-test "
+                    "(= ${binary:Version})\n", f.read())

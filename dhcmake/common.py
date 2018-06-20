@@ -30,6 +30,13 @@ def format_arg_for_print(arg):
         return arg
 
 
+def escape_substvar(value):
+    value = value.replace("$", "${}")
+    value = value.replace("\n", "${Newline}")
+
+    return value
+
+
 def DHEntryPoint(func):
     def wrapped(self, *args, **kargs):
         self.compat()
@@ -232,3 +239,15 @@ class DHCommon:
             return self.options.tmpdir
         else:
             return os.path.join("debian", package)
+
+    def write_substvar(self, name, value, package=None):
+        if package:
+            filename = "debian/%s.substvars" % package
+        else:
+            filename = "debian/substvars"
+
+        line = "%s=%s" % (name, value)
+        self.print_cmd(["echo", line, ">>", filename])
+        if not self.options.no_act:
+            with open(filename, "a") as f:
+                print(line, file=f)
