@@ -142,6 +142,10 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             with open("debian/.ctest/Testing/TAG", "r") as f:
                 self.assertRegex(next(f), "^[0-9]{8}-[0-9]{4}$")
                 self.assertEqual("Experimental", next(f).rstrip())
+                try:  # Extra line here as of CMake 3.12
+                    self.assertEqual("Experimental", next(f).rstrip())
+                except StopIteration:
+                    pass
                 with self.assertRaises(StopIteration):
                     next(f)
 
@@ -153,6 +157,10 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             with open("debian/.ctest/Testing/TAG", "r") as f:
                 self.assertRegex(next(f), "^[0-9]{8}-[0-9]{4}$")
                 self.assertEqual("Nightly", next(f).rstrip())
+                try:  # Extra line here as of CMake 3.12
+                    self.assertEqual("Nightly", next(f).rstrip())
+                except StopIteration:
+                    pass
                 with self.assertRaises(StopIteration):
                     next(f)
 
