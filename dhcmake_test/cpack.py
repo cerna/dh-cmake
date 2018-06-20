@@ -9,6 +9,51 @@ from dhcmake_test import *
 class DHCPackTestCase(DebianSourcePackageTestCaseBase):
     DHClass = cpack.DHCPack
 
+    libraries_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/lib",
+        "usr/lib/{arch}",
+        "usr/lib/{arch}/libdh-cmake-test.so.1",
+        "usr/lib/{arch}/libdh-cmake-test.so.1.0",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so.1",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so.1.0",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so.1",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so.1.0",
+    }))
+
+    headers_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/include",
+        "usr/include/dh-cmake-test.h",
+        "usr/include/dh-cmake-test-lib1.h",
+        "usr/include/dh-cmake-test-lib2.h",
+    }))
+
+    namelinks_files = set(KWTestCaseBase.replace_arch_in_paths({
+        "usr",
+        "usr/lib",
+        "usr/lib/{arch}",
+        "usr/lib/{arch}/libdh-cmake-test.so",
+        "usr/lib/{arch}/libdh-cmake-test-lib1.so",
+        "usr/lib/{arch}/libdh-cmake-test-lib2.so",
+    }))
+
+    libdh_cmake_test_files = {
+        "usr",
+        "usr/share",
+        "usr/share/doc",
+        "usr/share/doc/libdh-cmake-test",
+        "usr/share/doc/libdh-cmake-test/changelog.Debian.gz",
+    }
+
+    libdh_cmake_test_dev_files = {
+        "usr",
+        "usr/share",
+        "usr/share/doc",
+        "usr/share/doc/libdh-cmake-test-dev",
+        "usr/share/doc/libdh-cmake-test-dev/changelog.Debian.gz",
+    }
+
     def setUp(self):
         super().setUp()
 
@@ -102,3 +147,13 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         with open("debian/libdh-cmake-test-dev.substvars", "r") as f:
             self.assertEqual("cpack:Depends=libdh-cmake-test "
                     "(= ${binary:Version})\n", f.read())
+
+    def test_install(self):
+        self.dh.generate([])
+        self.dh.install([])
+
+        self.assertFileTreeEqual(self.libraries_files,
+                                 "debian/libdh-cmake-test")
+
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files,
+                                 "debian/libdh-cmake-test-dev")

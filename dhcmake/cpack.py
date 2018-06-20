@@ -136,7 +136,50 @@ class DHCPack(common.DHCommon):
             if depends:
                 self.write_substvar("cpack:Depends", depends, package)
 
+    @common.DHEntryPoint
+    def install(self, args=None):
+        self.parse_args(args)
+        self.read_cpack_metadata()
+
+        for package in self.get_packages():
+            for component in self.get_all_cpack_components(package):
+                for project in self.cpack_metadata["projects"]:
+                    if component in project["components"]:
+                        extra_args = []
+
+                        try:
+                            extra_args.append("-DBUILD_TYPE:STRING=" + \
+                                    self.cpack_metadata["buildType"])
+                        except KeyError:
+                            pass
+
+                        try:
+                            extra_args.append(
+                                    "-DCMAKE_INSTALL_DEFAULT_"
+                                    "DIRECTORY_PERMISSIONS:STRING=" +
+                                    self.cpack_metadata[
+                                        "defaultDirectoryPermissions"])
+                        except KeyError:
+                            pass
+
+                        if self.cpack_metadata["stripFiles"]:
+                            extra_args.append("-DCMAKE_INSTALL_DO_STRIP:BOOL=ON")
+
+                        self.do_cmake_install(
+                                project["directory"], self.get_tmpdir(package),
+                                component, extra_args)
+
 
 def generate():
     dhcpack = DHCPack()
     dhcpack.generate()
+
+
+def substvars():
+    dhcpack = DHCPack()
+    dhcpack.substvars()
+
+
+def install():
+    dhcpack = DHCPack()
+    dhcpack.install()

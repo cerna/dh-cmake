@@ -251,3 +251,15 @@ class DHCommon:
         if not self.options.no_act:
             with open(filename, "a") as f:
                 print(line, file=f)
+
+    def do_cmake_install(self, builddir, destdir, component=None,
+                         extra_args=None):
+        args = ["cmake"]
+        if component:
+            args += ["-DCOMPONENT:STRING=" + component]
+        if extra_args:
+            args += extra_args
+        args += ["-P", os.path.join(builddir, "cmake_install.cmake")]
+        env = os.environ.copy()
+        env["DESTDIR"] = os.path.abspath(destdir)
+        self.do_cmd(args, env=env)

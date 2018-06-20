@@ -17,15 +17,6 @@ class DHCMake(common.DHCommon):
         else:
             return []
 
-    def do_cmake_install(self, builddir, destdir, component=None):
-        args = ["cmake"]
-        if component:
-            args += ["-DCOMPONENT=" + component]
-        args += ["-P", os.path.join(builddir, "cmake_install.cmake")]
-        env = os.environ.copy()
-        env["DESTDIR"] = os.path.abspath(destdir)
-        self.do_cmd(args, env=env)
-
     @common.DHEntryPoint
     def install(self, args=None):
         self.parse_args(args)
