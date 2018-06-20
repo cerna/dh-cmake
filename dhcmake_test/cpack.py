@@ -30,6 +30,10 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileExists("debian/.cpack/cpack-metadata.json")
 
     def test_get_cpack_components(self):
+        with open("debian/libdh-cmake-test-extra-32.cpack-components", "w") \
+                as f:
+            f.write("InvalidComponent\n")
+
         self.dh.generate([])
         self.dh.read_cpack_metadata()
 
@@ -45,6 +49,10 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
             self.dh.get_cpack_components("libdh-cmake-test-extra-32")
 
     def test_get_cpack_component_groups(self):
+        with open("debian/libdh-cmake-test-extra-32.cpack-component-groups",
+                "w") as f:
+            f.write("InvalidGroup\n")
+
         self.dh.generate([])
         self.dh.read_cpack_metadata()
 
@@ -79,3 +87,10 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertEqual({"Libraries"},
                 self.dh.get_all_cpack_components("libdh-cmake-test"))
+
+    def test_get_package_dependencies(self):
+        self.dh.generate([])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual({"libdh-cmake-test"},
+                self.dh.get_package_dependencies("libdh-cmake-test-dev"))

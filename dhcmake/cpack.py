@@ -98,6 +98,19 @@ class DHCPack(common.DHCommon):
 
         return all_components
 
+    def get_package_dependencies(self, package):
+        deps = set()
+
+        for component in self.get_all_cpack_components(package):
+            for component_dep in self.cpack_metadata["components"][component] \
+                    ["dependencies"]:
+                for other_package, _, _ in self.get_all_packages():
+                    if component_dep in \
+                            self.get_all_cpack_components(other_package):
+                        deps.add(other_package)
+
+        return deps
+
     @common.DHEntryPoint
     def generate(self, args=None):
         self.parse_args(args)
