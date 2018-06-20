@@ -3,6 +3,37 @@ project(dh-cmake-test C)
 
 include(GNUInstallDirs)
 include(CTest)
+include(CPackComponent)
+
+cpack_add_component(Libraries
+  DISPLAY_NAME "Runtime libraries"
+  DESCRIPTION "Shared library files"
+  GROUP All
+)
+
+cpack_add_component(Headers
+  DISPLAY_NAME "Header files"
+  DESCRIPTION "#include files for the library"
+  GROUP Development
+  DEPENDS Libraries
+)
+
+cpack_add_component(Namelinks
+  DISPLAY_NAME "Shared library symbolic links"
+  DESCRIPTION "Symbolic links for the library"
+  GROUP Development
+  DEPENDS Libraries
+)
+
+cpack_add_component_group(All
+  DISPLAY_NAME "All components"
+  DESCRIPTION "Every component in the package"
+)
+
+cpack_add_component_group(Development
+  DISPLAY_NAME "Development files"
+  DESCRIPTION "Development files for the library"
+)
 
 macro(declare_lib LIBNAME)
   add_library(${LIBNAME} SHARED "${LIBNAME}.c")
@@ -53,3 +84,5 @@ option(DH_CMAKE_ENABLE_BAD_TEST "Enable bad test" OFF)
 if(DH_CMAKE_ENABLE_BAD_TEST)
   add_test(TestFalse false)
 endif()
+
+include(CPack)
