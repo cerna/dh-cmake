@@ -9,6 +9,7 @@ Architecture: any
 
 Package: libdh-cmake-test-dev
 Architecture: any
+Depends: ${cpack:Depends}
 
 Package: libdh-cmake-test-doc
 Architecture: all

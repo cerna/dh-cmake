@@ -2,7 +2,10 @@
 # BSD 3-Clause license. See top-level LICENSE file or
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
-from dhcmake import common, cpack
+import contextlib
+from debian import debfile, deb822
+
+from dhcmake import common, cpack, arch
 from dhcmake_test import *
 
 
@@ -157,3 +160,34 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertFileTreeEqual(self.headers_files | self.namelinks_files,
                                  "debian/libdh-cmake-test-dev")
+
+    def test_run_debian_rules(self):
+        self.run_debian_rules("build", "cpack")
+        self.run_debian_rules("install", "cpack")
+
+        self.assertFileTreeEqual(self.libraries_files \
+                                 | self.libdh_cmake_test_files,
+                                 "debian/libdh-cmake-test")
+
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files \
+                                 | self.libdh_cmake_test_dev_files,
+                                 "debian/libdh-cmake-test-dev")
+
+        self.run_debian_rules("binary", "cpack")
+
+        with contextlib.closing(debfile.DebFile(
+                "../libdh-cmake-test-dev_0.1-1_%s.deb" %
+                    arch.dpkg_architecture()["DEB_HOST_ARCH"])) as f:
+            packages = deb822.Packages(f.debcontrol())
+
+            self.assertEqual([
+                [
+                    {
+                        "name": "libdh-cmake-test",
+                        "archqual": None,
+                        "version": ("=", "0.1-1"),
+                        "arch": None,
+                        "restrictions": None,
+                    },
+                ],
+            ], packages.relations["depends"])
