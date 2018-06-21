@@ -66,6 +66,23 @@ And then your `debian/rules` file will look like this:
         dh $@ --buildsystem=cmake
 ```
 
+And a `debian/control` file (minimalistic, many fields have been omitted for
+brevity):
+
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.12), dh-cmake, debhelper (>= 11)
+
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
+```
+
 You might then have a `debian/libexample.install` file with the following:
 
 ```
@@ -304,4 +321,113 @@ submits these logs after the package build process has completed.
 
 cpack
 -----
-TODO
+
+The `cpack` Debhelper sequence provides integration with CPack's component
+system. If a CMake project is CPack aware, you can have binary packages
+correspond to CPack components or component groups, with the CPack dependency
+graph propagated into the output packages. The `cpack` sequence takes advantage
+of the new "CPack External" generator available in CMake 3.13.
+
+`--with cpack` adds three new commands to the Debhelper sequence:
+
+* `dh_cpack_generate`
+* `dh_cpack_substvars`
+* `dh_cpack_install`
+
+`dh_cpack_generate` does the initial generation with CPack, which generates a
+JSON file containing CPack metadata for dh-cmake to use. `dh_cpack_substvars`
+reads this JSON file and writes the CPack dependencies to a new substvars
+variable, `${cpack:Depends}`. Finally, `dh_cpack_install` is very similar to
+`dh_cmake_install` in that it installs components into a package, but it can
+also install entire CPack component groups into a package instead of having to
+enumerate every component in the component group. `dh_cpack_install` also has
+the limitation that the component or component group must be listed in the
+CMake project with `cpack_add_component()` or `cpack_add_component_group()`
+respectively.
+
+To use the `cpack` sequence, update your `debian/rules` file to look like the
+following:
+
+```makefile
+%:
+        dh $@ --buildsystem=cmake --with cpack --with ctest
+```
+
+Note that we have removed the `cmake` sequence here, because in our use case,
+the `cpack` sequence provides a more advanced version of the same features.
+However, there's no reason why you can't use `cmake` and `cpack` together if
+you want to.
+
+Now update your `CMakeLists.txt` file to look like this:
+
+```cmake
+cmake_minimum_required(VERSION 3.12)
+project(example C)
+
+include(GNUInstallDirs)
+include(CPackComponent)
+
+add_library(example SHARED example.c)
+set_target_properties(example PROPERTIES
+  PUBLIC_HEADER "example.h"
+  VERSION 1.0
+  SOVERSION 1
+)
+install(TARGETS example
+  LIBRARY
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT Libraries
+    NAMELINK_COMPONENT Namelinks
+  PUBLIC_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT Headers
+)
+
+cpack_add_component(Libraries)
+cpack_add_component(Namelinks GROUP Development DEPENDS Libraries)
+cpack_add_component(Headers GROUP Development DEPENDS Libraries)
+
+cpack_add_component_group(Development)
+
+include(CPack)
+```
+
+Note that we have changed the `COMPONENT` of the `PUBLIC_HEADER` block and the
+`NAMELINK_COMPONENT` of the `LIBRARY` block to be separate components, and we
+have placed both of these components in the `Development` component group. This
+is to demonstrate the group functionality of the `cpack` sequence. We have also
+added `DEPENDS` fields to the `Namelinks` and `Headers` components so they
+depend on `Libraries`.
+
+Since we have switched to `cpack`, rename `debian/libexample.cmake-components`
+to `debian/libexample.cpack-components`. This is the file that will be read by
+`dh_cpack_substvars` and `dh_cpack_install`. In addition, rename
+`debian/libexample-dev.cmake-components` to
+`debian/libexample-dev.cpack-component-groups`. We are doing a simple rename
+here because the old component name was `Development`, and the new group name
+is also `Development`.
+
+Finally, update `debian/control` to look like the following:
+
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.13), dh-cmake, debhelper (>= 11)
+
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: ${cpack:Depends}, ${misc:Depends}
+```
+
+Note that we have bumped the CMake version to 3.13 for the CPack External
+generator, and we have also replaced the `libexample` dependency in
+`libexample-dev` with `${cpack:Depends}`. This is a new field added by
+`dh_cpack_substvars`, which uses the `DEPENDS` field from
+`cpack_add_component()` to automatically generate this dependency. This may not
+be a big deal for small projects, but for a large project with lots of output
+packages, automatically using the dependency graph from CPack can be very
+useful.
