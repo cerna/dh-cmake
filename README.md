@@ -336,14 +336,14 @@ correspond to CPack components or component groups, with the CPack dependency
 graph propagated into the output packages. The `cpack` sequence takes advantage
 of the new "CPack External" generator available in CMake 3.13.
 
-`--with cpack` adds three new commands to the Debhelper sequence:
+`--with cpack` adds three new commands to the Debhelper `install` sequence:
 
 * `dh_cpack_generate`
 * `dh_cpack_substvars`
 * `dh_cpack_install`
 
 `dh_cpack_generate` does the initial generation with CPack, which generates a
-JSON file containing CPack metadata for dh-cmake to use. `dh_cpack_substvars`
+JSON file containing CPack metadata for `dh-cmake` to use. `dh_cpack_substvars`
 reads this JSON file and writes the CPack dependencies to a new substvars
 variable, `${cpack:Depends}`. Finally, `dh_cpack_install` is very similar to
 `dh_cmake_install` in that it installs components into a package, but it can
