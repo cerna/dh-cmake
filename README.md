@@ -62,6 +62,8 @@ install(TARGETS example
 And then your `debian/rules` file will look like this:
 
 ```makefile
+#!/usr/bin/make -f
+
 %:
         dh $@ --buildsystem=cmake
 ```
@@ -130,6 +132,8 @@ install(TARGETS example
 Revised `debian/rules` file:
 
 ```makefile
+#!/usr/bin/make -f
+
 %:
         dh $@ --buildsystem=cmake --with cmake
 ```
@@ -248,6 +252,8 @@ set(CTEST_DROP_SITE_CDASH TRUE)
 And finally update our `debian/rules` file:
 
 ```makefile
+#!/usr/bin/make -f
+
 %:
         dh $@ --buildsystem=cmake --with cmake --with ctest
 ```
@@ -266,6 +272,8 @@ because of the `EXAMPLE_RUN_BAD_TEST` option. To activate it, change your
 `debian/rules` file to look like the following:
 
 ```makefile
+#!/usr/bin/make -f
+
 %:
         dh $@ --buildsystem=cmake --with cmake --with ctest
 
@@ -349,6 +357,8 @@ To use the `cpack` sequence, update your `debian/rules` file to look like the
 following:
 
 ```makefile
+#!/usr/bin/make -f
+
 %:
         dh $@ --buildsystem=cmake --with cpack --with ctest
 ```
