@@ -74,7 +74,7 @@ brevity):
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.12), dh-cmake, debhelper (>= 11)
+Build-Depends: cmake (>= 3.12), debhelper (>= 11)
 
 Package: libexample
 Architecture: any
@@ -153,6 +153,34 @@ And delete `debian/libexample-dev.install` and replace it with a file called
 ```
 Development
 ```
+
+Add `dh-cmake` to your project's `Build-Depends`:
+
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.12), dh-cmake, debhelper (>= 11)
+
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
+```
+
+Finally, make a file called `debian/dh-cmake.compat`:
+
+```
+1
+```
+
+This tells `dh-cmake` to use its own compat level 1 when it runs. This file is
+similar in concept to Debhelper's own `debian/compat` file, but it lives in its
+own file to avoid being tied to Debhelper versions. As `dh-cmake` is further
+developed, backwards-incompatible changes will only occur in newer compat
+levels. Currently, the only available compat level is 1.
 
 Now, there's no more need to keep track of filename patterns, because the CMake
 component system puts the correct files in the correct packages.
