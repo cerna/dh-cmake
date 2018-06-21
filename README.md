@@ -403,6 +403,7 @@ cmake_minimum_required(VERSION 3.12)
 project(example C)
 
 include(GNUInstallDirs)
+include(CTest)
 include(CPackComponent)
 
 add_library(example SHARED example.c)
@@ -420,6 +421,13 @@ install(TARGETS example
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT Headers
 )
+
+add_test(TestSuccess true)
+
+option(EXAMPLE_RUN_BAD_TEST OFF)
+if(EXAMPLE_RUN_BAD_TEST)
+  add_test(TestFailure false)
+endif()
 
 cpack_add_component(Libraries)
 cpack_add_component(Namelinks GROUP Development DEPENDS Libraries)
