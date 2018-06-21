@@ -14,27 +14,6 @@ class DHCPack(common.DHCommon):
         with open("debian/.cpack/cpack-metadata.json", "r") as f:
             self.cpack_metadata = json.load(f)
 
-        # Manually populate the sub-groups and components of each group
-        for name, group in self.cpack_metadata["componentGroups"].items():
-            group["groups"] = []
-            group["components"] = []
-
-        for name, group in self.cpack_metadata["componentGroups"].items():
-            try:
-                parent_group = group["parentGroup"]
-            except KeyError:  # Optional field
-                continue
-            self.cpack_metadata["componentGroups"][parent_group]["groups"] \
-                    .append(name)
-
-        for name, component in self.cpack_metadata["components"].items():
-            try:
-                group = component["group"]
-            except KeyError:  # Optional field
-                continue
-            self.cpack_metadata["componentGroups"][group]["components"] \
-                    .append(name)
-
     def get_cpack_components(self, package):
         opened_file = self.read_package_file(package, "cpack-components")
         if opened_file:
@@ -82,7 +61,7 @@ class DHCPack(common.DHCommon):
                 ["components"])
 
         for sub_group in self.cpack_metadata["componentGroups"][group] \
-                ["groups"]:
+                ["subgroups"]:
             all_components.update(
                     self.get_all_cpack_components_for_group(
                         sub_group, visited))
@@ -121,6 +100,7 @@ class DHCPack(common.DHCommon):
                 os.path.join(self.get_build_directory(), "CPackConfig.cmake"),
                 "-G", "Ext",
                 "-D", "CPACK_PACKAGE_FILE_NAME=cpack-metadata",
+                "-D", "CPACK_EXT_REQUESTED_VERSIONS=1.0",
                 "-B", "debian/.cpack",
         ]
         self.do_cmd(cmd_args)
