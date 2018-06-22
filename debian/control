@@ -23,7 +23,8 @@ Depends:
     ${misc:Depends},
     ${perl:Depends},
     debhelper,
-    cmake
+    cmake,
+    dpkg-dev
 Description: Debhelper programs for CMake projects
  dh-cmake provides a set of Debhelper utilities for building packages that use
  advanced features of the CMake buildsystem, such as component installation,
