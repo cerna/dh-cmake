@@ -58,7 +58,7 @@ class DHCTest(common.DHCommon):
         dashboard_model = get_deb_ctest_option("model")
         if dashboard_model is None:
             if cmd is not None:
-                self.do_cmd([cmd, *self.options.extra_args])
+                self.do_cmd([cmd, *self.parsed_args])
         else:
             args = [
                 "ctest", "-S", self.get_dh_ctest_driver(),
@@ -71,7 +71,7 @@ class DHCTest(common.DHCommon):
             ]
             if cmd:
                 args.append("-DDH_CTEST_RUN_CMD:STRING=" \
-                    + format_args_for_ctest([cmd, *self.options.extra_args]))
+                    + format_args_for_ctest([cmd, *self.parsed_args]))
             if get_deb_ctest_option("submit") and not self.options.no_submit:
                 args.append("-DDH_CTEST_STEP_SUBMIT:BOOL=ON")
 
