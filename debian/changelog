@@ -1,4 +1,4 @@
-dh-cmake (0.3~dev2) UNRELEASED; urgency=medium
+dh-cmake (0.3~dev3) UNRELEASED; urgency=medium
 
   * Changed dh_cmake_install to use an absolute installation prefix.
   * Changed the dh_ctest_* steps to each do their own submit step, and
