@@ -1,3 +1,26 @@
+dh-cmake (0.3~dev1) UNRELEASED; urgency=medium
+
+  * Changed dh_cmake_install to use an absolute installation prefix.
+  * Changed the dh_ctest_* steps to each do their own submit step, and
+    removed dh_ctest_submit from the default ctest sequence. dh_ctest_submit
+    still exists, and you can pass --no-submit to the commands to keep the old
+    behavior.
+  * Added a new --parts argument to dh_ctest_submit to only submit some parts
+    to CDash.
+  * Added a compat level file, dh-cmake.compat, for future-proofing.
+  * Added new "site" and "build" options to DEB_CTEST_OPTIONS to control the
+    build and site names submitted to CDash.
+  * Changed how the dh_ctest_* commands pass arguments to their dh_auto_*
+    counterparts. Instead of passing all their arguments, they only pass the
+    "extra" arguments after the "--" argument.
+  * Added support for package architectures other than "any" and "all".
+  * Added support for the new CPack External generator provided by CPack. This
+    allows dh-cmake to install CPack components and component groups in
+    specific packages, and use the CPack dependency graph in the output
+    packages.
+
+ -- Kyle Edwards <kyle.edwards@kitware.com>  Fri, 22 Jun 2018 08:51:00 -0400
+
 dh-cmake (0.2) unstable; urgency=low
 
   * Added CTest support - you can now run CTest in dashboard mode from
