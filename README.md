@@ -228,6 +228,12 @@ behavior by passing a `--no-submit` option to them. You can also submit results
 explicitly with another optional command, `dh_ctest_submit`, which is not
 included in `--with ctest` by default.
 
+Note: if you pass `--no-submit`, you must pass it in the form `-O--no-submit`,
+because the `dh_ctest_*` commands pass ALL of their arguments to their
+`dh_auto_*` counterparts, which don't recognize the `--no-submit` parameter.
+Putting it in a `-O` parameter keeps them from throwing an error due to an
+unrecognized parameter.
+
 Note that the steps above correspond closely to CTest's
 [Dashboard Client Steps](https://cmake.org/cmake/help/latest/manual/ctest.1.html#dashboard-client-steps).
 Under the hood, they call the corresponding `ctest_*()` commands.
@@ -306,16 +312,10 @@ because of the `EXAMPLE_RUN_BAD_TEST` option. To activate it, change your
         dh $@ --buildsystem=cmake --with cmake --with ctest
 
 override_dh_ctest_configure:
-        dh_ctest_configure -- -- -DEXAMPLE_RUN_BAD_TEST:BOOL=ON
+        dh_ctest_configure -- -DEXAMPLE_RUN_BAD_TEST:BOOL=ON
 ```
 
 Now `dh_ctest_configure` will enable the bad test.
-
-Note that there are two `--` arguments in the command above. This is because
-`dh_ctest_configure` invokes `dh_auto_configure` under the hood, and everything
-after the first `--` argument gets passed to `dh_auto_configure`.
-`dh_auto_configure` in turn invokes CMake, which is what the second `--`
-argument is for - everything after it gets passed to CMake.
 
 Note: in the default mode, because `dh_ctest_test` simply calls `dh_auto_test`,
 it will still fail if any of the tests fail. However, in dashboard mode, CTest
