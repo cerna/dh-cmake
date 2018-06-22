@@ -41,6 +41,7 @@ setup(
         ("share/perl5/Debian/Debhelper/Sequence", [
             "perl5/Debian/Debhelper/Sequence/cmake.pm",
             "perl5/Debian/Debhelper/Sequence/ctest.pm",
+            "perl5/Debian/Debhelper/Sequence/cpack.pm",
         ]),
     ],
 )
