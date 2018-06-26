@@ -61,7 +61,7 @@ class DHCTest(common.DHCommon):
                 self.do_cmd([cmd, *self.parsed_args])
         else:
             args = [
-                "ctest", "-S", self.get_dh_ctest_driver(),
+                "ctest", "-VV", "-S", self.get_dh_ctest_driver(),
                 "-DDH_CTEST_SRCDIR:PATH=" + os.getcwd(),
                 "-DDH_CTEST_CTESTDIR:PATH=" + os.path.join(os.getcwd(),
                                                            "debian/.ctest"),
