@@ -1,4 +1,4 @@
-dh-cmake (0.3~dev4) UNRELEASED; urgency=medium
+dh-cmake (0.3~dev5) UNRELEASED; urgency=medium
 
   * Changed dh_cmake_install to use an absolute installation prefix.
   * Changed the dh_ctest_* steps to each do their own submit step, and
@@ -16,6 +16,7 @@ dh-cmake (0.3~dev4) UNRELEASED; urgency=medium
     specific packages, and use the CPack dependency graph in the output
     packages.
   * Added dpkg-dev to the dependencies (for dpkg-architecture).
+  * Added -VV argument to CTest calls to get output from invoked commands.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Fri, 22 Jun 2018 09:21:29 -0400
 
