@@ -1,4 +1,4 @@
-dh-cmake (0.3~dev5) UNRELEASED; urgency=medium
+dh-cmake (0.3) unstable; urgency=medium
 
   * Changed dh_cmake_install to use an absolute installation prefix.
   * Changed the dh_ctest_* steps to each do their own submit step, and
@@ -18,7 +18,7 @@ dh-cmake (0.3~dev5) UNRELEASED; urgency=medium
   * Added dpkg-dev to the dependencies (for dpkg-architecture).
   * Added -VV argument to CTest calls to get output from invoked commands.
 
- -- Kyle Edwards <kyle.edwards@kitware.com>  Fri, 22 Jun 2018 09:21:29 -0400
+ -- Kyle Edwards <kyle.edwards@kitware.com>  Wed, 27 Jun 2018 13:54:50 -0400
 
 dh-cmake (0.2) unstable; urgency=low
 
