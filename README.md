@@ -331,8 +331,8 @@ software project on a variety of different platforms. However, privacy is also
 very important, and as mentioned above, `dh_ctest_*` commands will not attempt
 to submit results to a CDash server unless `DEB_CTEST_OPTIONS` has both `model`
 AND `submit` activated. The `ctest` sequence will NEVER perform internet access
-without your consent. The `dh-cmake` test suite has tests to make sure
-`dh_ctest_submit` behaves properly. If `dh_ctest_submit` ever performs a rogue
+without your consent. The `dh-cmake` test suite has tests to make sure the
+submit functionality behaves properly. If `dh-cmake` ever performs a rogue
 submission, it is an extremely serious bug, and should be reported immediately.
 You are encouraged to monitor your network traffic to ensure the security of
 your network.
