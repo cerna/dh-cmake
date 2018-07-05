@@ -14,7 +14,6 @@ Standards-Version: 4.1.4.1
 Homepage: https://gitlab.kitware.com/debian/dh-cmake
 Vcs-Git: https://gitlab.kitware.com/debian/dh-cmake.git
 Vcs-Browser: https://gitlab.kitware.com/debian/dh-cmake
-X-Python3-Version: >= 3.2
 
 Package: dh-cmake
 Architecture: all
