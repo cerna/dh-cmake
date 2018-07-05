@@ -1,0 +1,18 @@
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake, dh-cmake, debhelper (>= 11)
+Standards-Version: 4.1.5
+Section: misc
+Priority: extra
+
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: dh-cmake example - libraries
+ This package contains the shared libraries for the dh-cmake example project.
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
+Description: dh-cmake example - development
+ This package contains the development files for the dh-cmake example project.
