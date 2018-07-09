@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-project(example C)
+project(libcmakeexample C)
 
 include(GNUInstallDirs)
 
-add_library(example SHARED example.c)
-set_target_properties(example PROPERTIES
+add_library(cmakeexample SHARED example.c)
+set_target_properties(cmakeexample PROPERTIES
   PUBLIC_HEADER "example.h"
   VERSION 1.0
   SOVERSION 1
 )
-install(TARGETS example
+install(TARGETS cmakeexample
   LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT Libraries
@@ -18,7 +18,7 @@ install(TARGETS example
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT Development
 )
-install(TARGETS example
+install(TARGETS cmakeexample
   LIBRARY
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT Development
