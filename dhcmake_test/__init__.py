@@ -127,17 +127,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         cls.scripts_install_dir.cleanup()
 
     def setUp(self):
-        self.stdout_infd, self.stdout_outfd = os.pipe()
-        self.stdout_inbfile = os.fdopen(self.stdout_infd, "rb")
-        self.stdout_outfile = os.fdopen(self.stdout_outfd, "w")
-
-        self.stderr_infd, self.stderr_outfd = os.pipe()
-        self.stderr_inbfile = os.fdopen(self.stderr_infd, "rb")
-        self.stderr_outfile = os.fdopen(self.stderr_outfd, "w")
-
         self.dh = self.DHClass()
-        self.dh.stdout = self.stdout_outfile
-        self.dh.stderr = self.stderr_outfile
 
         test_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(test_dir)
@@ -156,12 +146,6 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         os.chdir(self.old_cwd)
 
         self.tmp_dir.cleanup()
-
-        self.stderr_outfile.close()
-        self.stderr_inbfile.close()
-
-        self.stdout_outfile.close()
-        self.stdout_inbfile.close()
 
     def make_directory_in_tmp(self, name):
         path = os.path.join(self.tmp_dir.name, name)
