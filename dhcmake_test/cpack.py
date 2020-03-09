@@ -24,6 +24,11 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         "usr/lib/{arch}/libdh-cmake-test-lib2.so.1.0",
     }))
 
+    shlibs_files = {
+        "DEBIAN",
+        "DEBIAN/shlibs",
+    }
+
     headers_files = set(KWTestCaseBase.replace_arch_in_paths({
         "usr",
         "usr/include",
@@ -165,7 +170,7 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.run_debian_rules("build", "cpack")
         self.run_debian_rules("install", "cpack")
 
-        self.assertFileTreeEqual(self.libraries_files \
+        self.assertFileTreeEqual(self.libraries_files | self.shlibs_files \
                                  | self.libdh_cmake_test_files,
                                  "debian/libdh-cmake-test")
 
