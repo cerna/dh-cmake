@@ -2,6 +2,7 @@
 # BSD 3-Clause license. See top-level LICENSE file or
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
+import errno
 import os.path
 import shutil
 import subprocess
@@ -21,7 +22,7 @@ class VolatileNamedTemporaryFile:
         try:
             self.ntf.close()
         except OSError as e:
-            if e.errno != os.errno.ENOENT:
+            if e.errno != errno.ENOENT:
                 raise
 
     @property
