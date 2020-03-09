@@ -581,7 +581,7 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.dh.test(["-O--no-submit"])
             self.dh.submit([])
 
-            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+            self.assertFilesSubmittedEqual({"Configure", "Build", "Test", "Done"})
 
     def test_submit_experimental_submit_parts(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
