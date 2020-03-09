@@ -98,7 +98,7 @@ class DHCPack(common.DHCommon):
                 "cpack",
                 "--config",
                 os.path.join(self.get_build_directory(), "CPackConfig.cmake"),
-                "-G", "Ext",
+                "-G", "External",
                 "-D", "CPACK_PACKAGE_FILE_NAME=cpack-metadata",
                 "-D", "CPACK_EXT_REQUESTED_VERSIONS=1.0",
                 "-B", "debian/.cpack",
