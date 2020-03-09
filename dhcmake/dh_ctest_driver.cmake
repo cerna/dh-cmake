@@ -27,7 +27,7 @@ elseif(DH_CTEST_STEP STREQUAL configure)
 
   set(CTEST_CONFIGURE_COMMAND "${DH_CTEST_RUN_CMD}")
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
-  ctest_configure(BUILD "${DH_CTEST_TOPDIR}")
+  ctest_configure(BUILD "${DH_CTEST_SRCDIR}")
 
   step_submit(Configure)
 
@@ -35,7 +35,7 @@ elseif(DH_CTEST_STEP STREQUAL build)
 
   set(CTEST_BUILD_COMMAND "${DH_CTEST_RUN_CMD}")
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
-  ctest_build(BUILD "${DH_CTEST_TOPDIR}")
+  ctest_build(BUILD "${DH_CTEST_SRCDIR}")
 
   step_submit(Build)
 
