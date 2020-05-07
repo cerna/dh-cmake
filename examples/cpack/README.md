@@ -4,10 +4,6 @@ CMake Example
 This example project demonstrates how to use dh-cmake's CPack functionality. It
 can be built out of the box with dpkg-buildpackage.
 
-Please note that this project depends on features that are currently only in
-the CMake master branch. They will be available in CMake 3.13. If you want to
-test this example, you will need to build CMake from source.
-
 Look in the `debian/rules` file. Notice the `--with cpack` parameter. This
 enables the `cpack` Debhelper sequence, which runs the `dh_cpack_generate`,
 `dh_cpack_substvars`, and `dh_cpack_install` commands. The generate step

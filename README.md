@@ -40,7 +40,7 @@ packages.
 Let's say you have the following `CMakeLists.txt` file:
 
 ```cmake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(example C)
 
 include(GNUInstallDirs)
@@ -74,7 +74,7 @@ brevity):
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.12), debhelper (>= 11)
+Build-Depends: cmake (>= 3.15), debhelper (>= 11)
 
 Package: libexample
 Architecture: any
@@ -107,7 +107,7 @@ CMake provides a way to break an installation up into components, and
 `CMakeLists.txt` file:
 
 ```cmake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(example C)
 
 include(GNUInstallDirs)
@@ -159,7 +159,7 @@ Add `dh-cmake` to your project's `Build-Depends`:
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.12), dh-cmake, debhelper (>= 11)
+Build-Depends: cmake (>= 3.15), dh-cmake, debhelper (>= 11)
 
 Package: libexample
 Architecture: any
@@ -241,7 +241,7 @@ Under the hood, they call the corresponding `ctest_*()` commands.
 Let's add some tests to our `CMakeLists.txt` file:
 
 ```cmake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(example C)
 
 include(GNUInstallDirs)
@@ -399,7 +399,7 @@ you want to.
 Now update your `CMakeLists.txt` file to look like this:
 
 ```cmake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(example C)
 
 include(GNUInstallDirs)
@@ -458,7 +458,7 @@ Finally, update `debian/control` to look like the following:
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.13), dh-cmake, debhelper (>= 11)
+Build-Depends: cmake (>= 3.15), dh-cmake, debhelper (>= 11)
 
 Package: libexample
 Architecture: any
@@ -469,11 +469,9 @@ Architecture: any
 Depends: ${cpack:Depends}, ${misc:Depends}
 ```
 
-Note that we have bumped the CMake version to 3.13 for the CPack External
-generator, and we have also replaced the `libexample` dependency in
-`libexample-dev` with `${cpack:Depends}`. This is a new field added by
-`dh_cpack_substvars`, which uses the `DEPENDS` field from
-`cpack_add_component()` to automatically generate this dependency. This may not
-be a big deal for small projects, but for a large project with lots of output
-packages, automatically using the dependency graph from CPack can be very
-useful.
+Note that we have replaced the `libexample` dependency in `libexample-dev` with
+`${cpack:Depends}`. This is a new field added by `dh_cpack_substvars`, which
+uses the `DEPENDS` field from `cpack_add_component()` to automatically generate
+this dependency. This may not be a big deal for small projects, but for a large
+project with lots of output packages, automatically using the dependency graph
+from CPack can be very useful.
