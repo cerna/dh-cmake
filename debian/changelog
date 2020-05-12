@@ -8,6 +8,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Updated to use modern debhelper-compat dependency.
   * Bumped Debian policy version.
   * Now notifies Debhelper when CMake installs files.
+  * Added modernized compat mechanism with the pseudo-package dh-cmake-compat.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 
