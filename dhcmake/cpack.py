@@ -128,8 +128,10 @@ class DHCPack(common.DHCommon):
                         extra_args = []
 
                         try:
-                            extra_args.append("-DBUILD_TYPE:STRING=" + \
-                                    self.cpack_metadata["buildType"])
+                            extra_args.extend([
+                                "--config",
+                                self.cpack_metadata["buildType"]
+                            ])
                         except KeyError:
                             pass
 
@@ -143,7 +145,7 @@ class DHCPack(common.DHCommon):
                             pass
 
                         if self.cpack_metadata["stripFiles"]:
-                            extra_args.append("-DCMAKE_INSTALL_DO_STRIP:BOOL=ON")
+                            extra_args.append("--strip")
 
                         self.do_cmake_install(
                                 project["directory"], self.get_tmpdir(package),
