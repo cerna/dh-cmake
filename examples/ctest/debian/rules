@@ -1,4 +1,4 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --buildsystem=cmake --with ctest
+	dh $@ --buildsystem=cmake

@@ -129,19 +129,27 @@ install(TARGETS example
 )
 ```
 
-Revised `debian/rules` file:
+Add `dh-cmake` and `dh-sequence-cmake` to the `Build-Depends` in the
+`debian/control` file:
 
-```makefile
-#!/usr/bin/make -f
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.15), dh-cmake, dh-sequence-cmake, debhelper (>= 11)
 
-%:
-        dh $@ --buildsystem=cmake --with cmake
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
 ```
 
-The `--with cmake` argument causes the `cmake` Debhelper sequence to be loaded,
-which takes advantage of the `COMPONENT` arguments in the `install()` commands.
-Now let's get rid of `debian/libexample.install` and replace it with a file
-called `debian/libexample.cmake-components`:
+The `dh-sequence-cmake` dependency causes the `cmake` Debhelper sequence to be
+loaded, which takes advantage of the `COMPONENT` arguments in the `install()`
+commands. Now let's get rid of `debian/libexample.install` and replace it with
+a file called `debian/libexample.cmake-components`:
 
 ```
 Libraries
@@ -152,22 +160,6 @@ And delete `debian/libexample-dev.install` and replace it with a file called
 
 ```
 Development
-```
-
-Add `dh-cmake` to your project's `Build-Depends`:
-
-```
-Source: libexample
-Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.15), dh-cmake, debhelper (>= 11)
-
-Package: libexample
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-
-Package: libexample-dev
-Architecture: any
-Depends: libexample (= ${binary:Version}), ${misc:Depends}
 ```
 
 Finally, make a file called `debian/dh-cmake.compat`:
@@ -189,17 +181,18 @@ ctest
 -----
 
 The `ctest` sequence integrates CTest and CDash into the Debian build process.
-Projects that are CTest-aware can use `--with ctest` to run CTest in dashboard
-mode during a build and submit configure, build, and test logs to the CDash
-server listed in the project's `CTestConfig.cmake` file. The `ctest` sequence
-is designed to bring Kitware's software process to the Debian build system.
+Projects that are CTest-aware can use `dh-sequence-ctest` to run CTest in
+dashboard mode during a build and submit configure, build, and test logs to the
+CDash server listed in the project's `CTestConfig.cmake` file. The `ctest`
+sequence is designed to bring Kitware's software process to the Debian build
+system.
 
-Note: `--with ctest` is primarily for use in packages that are under
+Note: `dh-sequence-ctest` is primarily for use in packages that are under
 development and trying to achieve Debian policy compliance. It is designed to
 monitor the health of the project when being built in a Debian environment. It
 is not primarily intended for use in production packages.
 
-`--with ctest` adds four new commands to the Debhelper `build` sequence:
+`dh-sequence-ctest` adds four new commands to the Debhelper `build` sequence:
 
 * `dh_ctest_start`
 * `dh_ctest_configure`
@@ -226,7 +219,7 @@ When used without any options, the `configure`, `build`, and `test` steps each
 submit their own results to CDash upon completion, but you can disable this
 behavior by passing a `--no-submit` option to them. You can also submit results
 explicitly with another optional command, `dh_ctest_submit`, which is not
-included in `--with ctest` by default.
+included in `dh-sequence-ctest` by default.
 
 Note: if you pass `--no-submit`, you must pass it in the form `-O--no-submit`,
 because the `dh_ctest_*` commands pass ALL of their arguments to their
@@ -283,13 +276,21 @@ set(CTEST_DROP_LOCATION "/submit.php?project=example")
 set(CTEST_DROP_SITE_CDASH TRUE)
 ```
 
-And finally update our `debian/rules` file:
+And finally update our `debian/control` file:
 
-```makefile
-#!/usr/bin/make -f
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.15), dh-cmake, dh-sequence-cmake,
+               dh-sequence-ctest, debhelper (>= 11)
 
-%:
-        dh $@ --buildsystem=cmake --with cmake --with ctest
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
 ```
 
 Now the project is CTest-aware, and you can build the Debian package and run
@@ -309,7 +310,7 @@ because of the `EXAMPLE_RUN_BAD_TEST` option. To activate it, change your
 #!/usr/bin/make -f
 
 %:
-        dh $@ --buildsystem=cmake --with cmake --with ctest
+        dh $@ --buildsystem=cmake
 
 override_dh_ctest_configure:
         dh_ctest_configure -- -DEXAMPLE_RUN_BAD_TEST:BOOL=ON
@@ -364,7 +365,8 @@ correspond to CPack components or component groups, with the CPack dependency
 graph propagated into the output packages. The `cpack` sequence takes advantage
 of the new "CPack External" generator available in CMake 3.13.
 
-`--with cpack` adds three new commands to the Debhelper `install` sequence:
+`dh-sequence-cpack` adds three new commands to the Debhelper `install`
+sequence:
 
 * `dh_cpack_generate`
 * `dh_cpack_substvars`
@@ -381,14 +383,22 @@ the limitation that the component or component group must be listed in the
 CMake project with `cpack_add_component()` or `cpack_add_component_group()`
 respectively.
 
-To use the `cpack` sequence, update your `debian/rules` file to look like the
+To use the `cpack` sequence, update your `debian/control` file to look like the
 following:
 
-```makefile
-#!/usr/bin/make -f
+```
+Source: libexample
+Maintainer: Example <example@example.com>
+Build-Depends: cmake (>= 3.15), dh-cmake, dh-sequence-cpack,
+               dh-sequence-ctest, debhelper (>= 11)
 
-%:
-        dh $@ --buildsystem=cmake --with cpack --with ctest
+Package: libexample
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+
+Package: libexample-dev
+Architecture: any
+Depends: libexample (= ${binary:Version}), ${misc:Depends}
 ```
 
 Note that we have removed the `cmake` sequence here, because in our use case,
@@ -458,7 +468,8 @@ Finally, update `debian/control` to look like the following:
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.15), dh-cmake, debhelper (>= 11)
+Build-Depends: cmake (>= 3.15), dh-cmake, dh-sequence-cpack,
+               dh-sequence-ctest, debhelper (>= 11)
 
 Package: libexample
 Architecture: any
