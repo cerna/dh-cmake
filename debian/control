@@ -14,6 +14,7 @@ Standards-Version: 4.5.0
 Homepage: https://gitlab.kitware.com/debian/dh-cmake
 Vcs-Git: https://gitlab.kitware.com/debian/dh-cmake.git
 Vcs-Browser: https://gitlab.kitware.com/debian/dh-cmake
+Rules-Requires-Root: no
 
 Package: dh-cmake
 Architecture: all
