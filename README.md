@@ -129,13 +129,13 @@ install(TARGETS example
 )
 ```
 
-Add `dh-cmake` and `dh-sequence-cmake` to the `Build-Depends` in the
-`debian/control` file:
+Add `dh-cmake`, `dh-cmake-compat`, and `dh-sequence-cmake` to the
+`Build-Depends` in the `debian/control` file:
 
 ```
 Source: libexample
 Maintainer: Example <example@example.com>
-Build-Depends: cmake (>= 3.15), dh-cmake, dh-sequence-cmake, debhelper (>= 11)
+Build-Depends: cmake (>= 3.15), dh-cmake, dh-cmake-compat (= 1), dh-sequence-cmake, debhelper (>= 11)
 
 Package: libexample
 Architecture: any
@@ -151,6 +151,12 @@ loaded, which takes advantage of the `COMPONENT` arguments in the `install()`
 commands. Now let's get rid of `debian/libexample.install` and replace it with
 a file called `debian/libexample.cmake-components`:
 
+`dh-cmake-compat (= 1)` tells `dh-cmake` to use its own compat level 1 when it
+runs. This pseudo-package is similar in concept to `debhelper-compat`, but it
+lives in its own pseudo-package to avoid being tied to Debhelper versions. As
+`dh-cmake` is further developed, backwards-incompatible changes will only occur
+in newer compat levels. Currently, the only available compat level is 1.
+
 ```
 Libraries
 ```
@@ -161,18 +167,6 @@ And delete `debian/libexample-dev.install` and replace it with a file called
 ```
 Development
 ```
-
-Finally, make a file called `debian/dh-cmake.compat`:
-
-```
-1
-```
-
-This tells `dh-cmake` to use its own compat level 1 when it runs. This file is
-similar in concept to Debhelper's own `debian/compat` file, but it lives in its
-own file to avoid being tied to Debhelper versions. As `dh-cmake` is further
-developed, backwards-incompatible changes will only occur in newer compat
-levels. Currently, the only available compat level is 1.
 
 Now, there's no more need to keep track of filename patterns, because the CMake
 component system puts the correct files in the correct packages.
