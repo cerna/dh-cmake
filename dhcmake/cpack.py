@@ -135,14 +135,15 @@ class DHCPack(common.DHCommon):
                         except KeyError:
                             pass
 
-                        try:
-                            extra_args.append(
-                                    "-DCMAKE_INSTALL_DEFAULT_"
-                                    "DIRECTORY_PERMISSIONS:STRING=" +
-                                    self.cpack_metadata[
-                                        "defaultDirectoryPermissions"])
-                        except KeyError:
-                            pass
+                        # TODO Fix this in CMake (https://gitlab.kitware.com/cmake/cmake/-/issues/20700)
+                        #try:
+                        #    extra_args.append(
+                        #            "-DCMAKE_INSTALL_DEFAULT_"
+                        #            "DIRECTORY_PERMISSIONS:STRING=" +
+                        #            self.cpack_metadata[
+                        #                "defaultDirectoryPermissions"])
+                        #except KeyError:
+                        #    pass
 
                         if self.cpack_metadata["stripFiles"]:
                             extra_args.append("--strip")
