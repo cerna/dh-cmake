@@ -1,3 +1,16 @@
+dh-cmake (0.4~) UNRELEASED; urgency=low
+
+  * Added examples.
+  * Changed CMake installation to use cmake --install instead of
+    cmake_install.cmake script.
+  * Changed cmake dependency to "Recommends" instead of "Depends".
+  * Added `Provides: dh-sequence-{cmake,ctest,cpack}` to binary package.
+  * Updated to use modern debhelper-compat dependency.
+  * Bumped Debian policy version.
+  * Now notifies Debhelper when CMake installs files.
+
+ -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
+
 dh-cmake (0.3) unstable; urgency=medium
 
   * Changed dh_cmake_install to use an absolute installation prefix.
