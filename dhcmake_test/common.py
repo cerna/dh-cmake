@@ -269,7 +269,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
 
 class DHCommonCompatTestClass(common.DHCommon):
-    @common.DHEntryPoint
+    @common.DHEntryPoint("dh_common_test_command")
     def test_command(self, args=None):
         self.parse_args(args)
         # Do nothing
@@ -282,3 +282,4 @@ class DHCommonCompatTestCase(DebianSourcePackageTestCaseBase):
         self.assertIs(None, self.dh._compat)
         self.dh.test_command([])
         self.assertEqual(1, self.dh._compat)
+        self.assertEqual("dh_common_test_command", self.dh.tool_name)

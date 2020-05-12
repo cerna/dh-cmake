@@ -37,12 +37,15 @@ def escape_substvar(value):
     return value
 
 
-def DHEntryPoint(func):
-    def wrapped(self, *args, **kargs):
-        self.compat()
-        return func(self, *args, **kargs)
+def DHEntryPoint(tool_name):
+    def wrapper(func):
+        def wrapped(self, *args, **kargs):
+            self.tool_name = tool_name
+            self.compat()
+            return func(self, *args, **kargs)
 
-    return wrapped
+        return wrapped
+    return wrapper
 
 
 class DHCommon:

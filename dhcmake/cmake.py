@@ -17,7 +17,7 @@ class DHCMake(common.DHCommon):
         else:
             return []
 
-    @common.DHEntryPoint
+    @common.DHEntryPoint("dh_cmake_install")
     def install(self, args=None):
         self.parse_args(args)
         for p in self.get_packages():

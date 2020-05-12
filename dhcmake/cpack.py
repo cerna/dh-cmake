@@ -90,7 +90,7 @@ class DHCPack(common.DHCommon):
 
         return deps
 
-    @common.DHEntryPoint
+    @common.DHEntryPoint("dh_cpack_generate")
     def generate(self, args=None):
         self.parse_args(args)
 
@@ -105,7 +105,7 @@ class DHCPack(common.DHCommon):
         ]
         self.do_cmd(cmd_args)
 
-    @common.DHEntryPoint
+    @common.DHEntryPoint("dh_cpack_substvars")
     def substvars(self, args=None):
         self.parse_args(args)
         self.read_cpack_metadata()
@@ -116,7 +116,7 @@ class DHCPack(common.DHCommon):
             if depends:
                 self.write_substvar("cpack:Depends", depends, package)
 
-    @common.DHEntryPoint
+    @common.DHEntryPoint("dh_cpack_install")
     def install(self, args=None):
         self.parse_args(args)
         self.read_cpack_metadata()
