@@ -23,6 +23,15 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
     def check_packages(self, expected_packages):
         self.assertEqual(expected_packages, set(self.dh.get_packages()))
 
+    def strip_dh_cmake_compat(self):
+        contents = ""
+        with open("debian/control", "r") as f:
+            for l in f:
+                if l != "    dh-cmake-compat (= 1),\n":
+                    contents += l
+        with open("debian/control", "w") as f:
+            f.write(contents)
+
     def test_do_cmd(self):
         self.dh.parse_args([])
 
@@ -242,29 +251,43 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         self.assertEqual(1, self.dh.compat())
 
     def test_compat_low(self):
+        self.strip_dh_cmake_compat()
         with open("debian/dh-cmake.compat", "w") as f:
             print(common.MIN_COMPAT - 1, file=f)
 
-        with self.assertRaises(
+        with self.assertRaisesRegex(
                 common.CompatError,
-                msg="Compat level %i too old (must be %i or newer)"
+                r"Compat level %i too old \(must be %i or newer\)"
                     % (common.MIN_COMPAT - 1, common.MIN_COMPAT)):
             self.dh.compat()
 
     def test_compat_high(self):
+        self.strip_dh_cmake_compat()
         with open("debian/dh-cmake.compat", "w") as f:
             print(common.MAX_COMPAT + 1, file=f)
 
-        with self.assertRaises(
+        with self.assertRaisesRegex(
                 common.CompatError,
-                msg="Compat level %i too new (must be %i or older)"
+                r"Compat level %i too new \(must be %i or older\)"
                     % (common.MAX_COMPAT + 1, common.MAX_COMPAT)):
             self.dh.compat()
 
     def test_compat_missing(self):
+        self.strip_dh_cmake_compat()
         os.unlink("debian/dh-cmake.compat")
 
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaisesRegex(
+                common.CompatError,
+                "No compat level specified"):
+            self.dh.compat()
+
+    def test_compat_conflicting(self):
+        with open("debian/dh-cmake.compat", "w") as f:
+            print(2, file=f)
+
+        with self.assertRaisesRegex(
+                common.CompatError,
+                "Conflicting compat levels: 1, 2"):
             self.dh.compat()
 
 

@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from dhcmake import deb822, arch
+import debian.deb822
 
 
 MIN_COMPAT = 1
@@ -69,10 +70,37 @@ class DHCommon:
             self.options.options = []
             self._parse_args(parser, options, True)
 
+    def _set_compat(self, compat):
+        if self._compat is not None and self._compat != compat:
+            raise CompatError("Conflicting compat levels: %i, %i" %
+                    (self._compat, compat))
+        self._compat = compat
+
     def compat(self):
         if self._compat is None:
-            with open("debian/dh-cmake.compat", "r") as f:
-                self._compat = int(f.read())
+            with open("debian/control", "r") as f:
+                source, _ = deb822.read_control(f)
+            try:
+                deps = source["Build-Depends"]
+            except KeyError:
+                deps = None
+            if deps:
+                deps_parsed = debian.deb822.PkgRelation.parse_relations(deps)
+                for dep in deps_parsed:
+                    for subdep in dep:
+                        if subdep["name"] == "dh-cmake-compat" and subdep["version"]:
+                            sign, version = subdep["version"]
+                            if sign == "=":
+                                self._set_compat(int(version))
+
+            try:
+                with open("debian/dh-cmake.compat", "r") as f:
+                    self._set_compat(int(f.read()))
+            except FileNotFoundError:
+                pass
+
+            if self._compat is None:
+                raise CompatError("No compat level specified")
 
             if self._compat < MIN_COMPAT:
                 raise CompatError(

@@ -29,7 +29,8 @@ Recommends:
 Provides:
     dh-sequence-cmake,
     dh-sequence-ctest,
-    dh-sequence-cpack
+    dh-sequence-cpack,
+    dh-cmake-compat (= 1)
 Description: Debhelper programs for CMake projects
  dh-cmake provides a set of Debhelper utilities for building packages that use
  advanced features of the CMake buildsystem, such as component installation,

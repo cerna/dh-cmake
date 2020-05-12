@@ -3,6 +3,9 @@ Maintainer: Kitware Debian Maintainers <debian@kitware.com>
 Uploaders:
     Kyle Edwards <kyle.edwards@kitware.com>,
     Kitware Robot <kwrobot@kitware.com>
+Build-Depends:
+    dh-cmake-compat (= 1),
+    dh-cmake
 
 Package: libdh-cmake-test
 Architecture: any
