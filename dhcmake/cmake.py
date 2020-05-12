@@ -23,7 +23,8 @@ class DHCMake(common.DHCommon):
         for p in self.get_packages():
             for c in self.get_cmake_components(p):
                 self.do_cmake_install(self.get_build_directory(),
-                                      self.get_tmpdir(p), c)
+                                      self.get_tmpdir(p), component=c,
+                                      package=p)
 
 
 def install():

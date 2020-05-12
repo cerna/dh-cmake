@@ -45,6 +45,10 @@ class KWTestCaseBase(TestCase):
         self.assertFalse(os.path.exists(
             path), "File '{0}' exists".format(path))
 
+    def assertFileContentsEqual(self, expected_contents, path):
+        with open(path) as f:
+            self.assertEqual(expected_contents, f.read())
+
     def assertFileTreeEqual(self, expected_files, path):
         actual_files = set()
         for dirpath, dirnames, filenames in os.walk(path):

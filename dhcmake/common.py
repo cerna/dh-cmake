@@ -255,8 +255,18 @@ class DHCommon:
             with open(filename, "a") as f:
                 print(line, file=f)
 
+    def log_installed_files(self, package, paths):
+        if self.options.no_act:
+            return
+        pkgdir = "debian/.debhelper/generated/%s" % package
+        os.makedirs(pkgdir, exist_ok=True)
+        with open(os.path.join(pkgdir, "installed-by-%s" % self.tool_name),
+                  "a") as f:
+            for p in paths:
+                f.write("%s\n" % p)
+
     def do_cmake_install(self, builddir, destdir, component=None,
-                         extra_args=None):
+                         package=None, extra_args=None):
         args = ["cmake", "--install", builddir]
         if component:
             args += ["--component", component]
@@ -265,3 +275,14 @@ class DHCommon:
         env = os.environ.copy()
         env["DESTDIR"] = os.path.abspath(destdir)
         self.do_cmd(args, env=env)
+
+        if package:
+            if component:
+                install_manifest = "install_manifest_%s.txt" % component
+            else:
+                install_manifest = "install_manifest.txt"
+            with open(os.path.join(builddir, install_manifest)) as f:
+                files = [os.path.join("debian/tmp",
+                                      os.path.relpath(l.rstrip("\n"), "/"))
+                             for l in f]
+            self.log_installed_files(package, files)

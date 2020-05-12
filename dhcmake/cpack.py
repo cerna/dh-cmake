@@ -147,7 +147,8 @@ class DHCPack(common.DHCommon):
 
                         self.do_cmake_install(
                                 project["directory"], self.get_tmpdir(package),
-                                component, extra_args)
+                                package=package, component=component,
+                                extra_args=extra_args)
 
 
 def generate():

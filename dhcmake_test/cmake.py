@@ -108,13 +108,23 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
     def test_cmake_install_one_component(self):
         self.setup_do_cmake_install()
+        self.dh.tool_name = "dh_test_cmake_install_one_component"
         self.dh.parse_args([])
 
         self.dh.do_cmake_install(self.build_dir,
                                  self.install_dev_dir,
-                                 component="Headers")
+                                 component="Headers",
+                                 package="libdh-cmake-test-dev")
 
         self.assertFileTreeEqual(self.headers_files, self.install_dev_dir)
+        expected_contents = "\n".join(self.replace_arch_in_paths([
+            "debian/tmp/usr/include/dh-cmake-test.h",
+            "debian/tmp/usr/include/dh-cmake-test-lib1.h",
+            "debian/tmp/usr/include/dh-cmake-test-lib2.h",
+        ])) + "\n"
+        self.assertFileContentsEqual(expected_contents,
+            "debian/.debhelper/generated/libdh-cmake-test-dev/"
+            "installed-by-dh_test_cmake_install_one_component")
 
     def test_get_cmake_components(self):
         self.dh.parse_args([])
