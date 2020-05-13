@@ -148,14 +148,16 @@ Depends: libexample (= ${binary:Version}), ${misc:Depends}
 
 The `dh-sequence-cmake` dependency causes the `cmake` Debhelper sequence to be
 loaded, which takes advantage of the `COMPONENT` arguments in the `install()`
-commands. Now let's get rid of `debian/libexample.install` and replace it with
-a file called `debian/libexample.cmake-components`:
+commands.
 
 `dh-cmake-compat (= 1)` tells `dh-cmake` to use its own compat level 1 when it
 runs. This pseudo-package is similar in concept to `debhelper-compat`, but it
 lives in its own pseudo-package to avoid being tied to Debhelper versions. As
 `dh-cmake` is further developed, backwards-incompatible changes will only occur
 in newer compat levels. Currently, the only available compat level is 1.
+
+Now let's get rid of `debian/libexample.install` and replace it with a file
+called `debian/libexample.cmake-components`:
 
 ```
 Libraries
