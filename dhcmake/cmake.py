@@ -17,9 +17,17 @@ class DHCMake(common.DHCommon):
         else:
             return []
 
+    def install_make_arg_parser(self, parser):
+        self.make_arg_parser(parser)
+        parser.add_argument(
+            "--sourcedir", action="store",
+            help="Source directory for installation (not used except to notify"
+                 " dh_missing)",
+            default="debian/tmp")
+
     @common.DHEntryPoint("dh_cmake_install")
     def install(self, args=None):
-        self.parse_args(args)
+        self.parse_args(args, make_arg_parser=self.install_make_arg_parser)
         for p in self.get_packages():
             for c in self.get_cmake_components(p):
                 self.do_cmake_install(self.get_build_directory(),

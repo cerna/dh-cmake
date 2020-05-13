@@ -116,9 +116,17 @@ class DHCPack(common.DHCommon):
             if depends:
                 self.write_substvar("cpack:Depends", depends, package)
 
+    def install_make_arg_parser(self, parser):
+        self.make_arg_parser(parser)
+        parser.add_argument(
+            "--sourcedir", action="store",
+            help="Source directory for installation (not used except to notify"
+                 " dh_missing)",
+            default="debian/tmp")
+
     @common.DHEntryPoint("dh_cpack_install")
     def install(self, args=None):
-        self.parse_args(args)
+        self.parse_args(args, make_arg_parser=self.install_make_arg_parser)
         self.read_cpack_metadata()
 
         for package in self.get_packages():

@@ -110,6 +110,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.setup_do_cmake_install()
         self.dh.tool_name = "dh_test_cmake_install_one_component"
         self.dh.parse_args([])
+        self.dh.options.sourcedir = "debian/tmp"
 
         self.dh.do_cmake_install(self.build_dir,
                                  self.install_dev_dir,

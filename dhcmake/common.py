@@ -310,7 +310,7 @@ class DHCommon:
             else:
                 install_manifest = "install_manifest.txt"
             with open(os.path.join(builddir, install_manifest)) as f:
-                files = [os.path.join("debian/tmp",
+                files = [os.path.join(self.options.sourcedir,
                                       os.path.relpath(l.rstrip("\n"), "/"))
                              for l in f]
             self.log_installed_files(package, files)
