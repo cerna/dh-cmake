@@ -3,10 +3,11 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import contextlib
-from debian import debfile, deb822
 
 from dhcmake import common, cpack, arch
 from dhcmake_test import *
+
+from debian import debfile, deb822
 
 
 class DHCPackTestCase(DebianSourcePackageTestCaseBase):
