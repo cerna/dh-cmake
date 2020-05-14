@@ -432,6 +432,14 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
 
+    def test_test_none_bad_exclude(self):
+        self.dh.start([])
+        self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
+        self.dh.build([])
+        self.dh.test(["--", "-E", "TestFalse"])
+
+        self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
+
     def test_test_experimental(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
@@ -522,6 +530,29 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             test_false = self.get_single_element(tree.findall(
                 "Testing/Test[Name='TestFalse']"))
             self.assertEqual("failed", test_false.get("Status"))
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_test_experimental_bad_exclude(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start([])
+            self.dh.configure([
+                "--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
+            self.dh.build([])
+            self.dh.test(["--", "-E", "TestFalse"])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            tests = tree.findall("Testing/Test")
+            self.assertEqual(2, len(tests))
+
+            test_true = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestTrue']"))
+            self.assertEqual("passed", test_true.get("Status"))
 
             self.assertFilesSubmittedEqual({})
 

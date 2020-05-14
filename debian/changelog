@@ -10,6 +10,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Now notifies Debhelper when CMake installs files.
   * Added modernized compat mechanism with the pseudo-package dh-cmake-compat.
   * Added --component argument to dh_cmake_install.
+  * dh_ctest_test now calls ctest instead of dh_auto_test.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 

@@ -59,6 +59,7 @@ class DHCTest(common.DHCommon):
         if dashboard_model is None:
             if cmd is not None:
                 self.do_cmd([cmd, *self.parsed_args])
+            return False
         else:
             args = [
                 "ctest", "-VV", "-S", self.get_dh_ctest_driver(),
@@ -88,6 +89,7 @@ class DHCTest(common.DHCommon):
                         ";".join(self.options.parts))
 
             self.do_cmd(args)
+            return True
 
     @common.DHEntryPoint("dh_ctest_start")
     def start(self, args=None):
@@ -107,7 +109,9 @@ class DHCTest(common.DHCommon):
     @common.DHEntryPoint("dh_ctest_test")
     def test(self, args=None):
         self.parse_args(args)
-        self.do_ctest_step("test", "dh_auto_test")
+        if not self.do_ctest_step("test"):
+            self.do_cmd(["ctest", "-VV", *self.parsed_args],
+                        cwd=self.get_build_directory())
 
     def submit_make_arg_parser(self, parser):
         super().make_arg_parser(parser)

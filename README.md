@@ -314,11 +314,11 @@ override_dh_ctest_configure:
 
 Now `dh_ctest_configure` will enable the bad test.
 
-Note: in the default mode, because `dh_ctest_test` simply calls `dh_auto_test`,
-it will still fail if any of the tests fail. However, in dashboard mode, CTest
-allows tests to fail without failing the entire build process, and
-`dh_ctest_test` reflects this behavior, so that the package can still build in
-development even if some of the tests fail.
+Note: in the default mode, because `dh_ctest_test` simply calls `ctest`
+without dashboard mode, it will still fail if any of the tests fail. However,
+in dashboard mode, CTest allows tests to fail without failing the entire build
+process, and `dh_ctest_test` reflects this behavior, so that the package can
+still build in development even if some of the tests fail.
 
 ### A Word About Privacy
 
