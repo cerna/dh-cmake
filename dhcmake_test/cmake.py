@@ -148,7 +148,8 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
             "libdh-cmake-test-doc"))
 
     def do_dh_cmake_install(self, args):
-        self.dh.parse_args(args)
+        self.dh.parse_args(
+            args, make_arg_parser=self.dh.install_make_arg_parser)
 
         os.mkdir(self.dh.get_build_directory())
 
@@ -170,6 +171,23 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
         self.assertFileTreeEqual(self.headers_files | self.namelinks_files,
                                  "debian/libdh-cmake-test-dev")
+
+    def test_dh_cmake_install_package_component(self):
+        self.do_dh_cmake_install(["--package", "libdh-cmake-test",
+                                  "--component", "Namelinks", "--component",
+                                  "Libraries"])
+
+        self.assertFileTreeEqual(self.libraries_files | self.namelinks_files,
+                                 "debian/libdh-cmake-test")
+
+    def test_dh_cmake_install_package_component_error(self):
+        with self.assertRaisesRegex(
+                common.PackageError,
+                "Can only specify one package when specifying components"):
+            self.do_dh_cmake_install(["--package", "libdh-cmake-test",
+                                      "--package", "libdh-cmake-test-dev",
+                                      "--component", "Namelinks",
+                                      "--component", "Libraries"])
 
     def test_dh_cmake_install_tmpdir(self):
         self.do_dh_cmake_install(["--tmpdir=debian/tmp"])

@@ -20,6 +20,10 @@ class CompatError(Exception):
     pass
 
 
+class PackageError(Exception):
+    pass
+
+
 def format_arg_for_print(arg):
     arg = arg.replace("\\", "\\\\")
     arg = arg.replace('"', '\\"')

@@ -20,6 +20,9 @@ class DHCMake(common.DHCommon):
     def install_make_arg_parser(self, parser):
         self.make_arg_parser(parser)
         parser.add_argument(
+            "--component", action="append",
+            help="Component to install for a package")
+        parser.add_argument(
             "--sourcedir", action="store",
             help="Source directory for installation (not used except to notify"
                  " dh_missing)",
@@ -28,10 +31,20 @@ class DHCMake(common.DHCommon):
     @common.DHEntryPoint("dh_cmake_install")
     def install(self, args=None):
         self.parse_args(args, make_arg_parser=self.install_make_arg_parser)
-        for p in self.get_packages():
-            for c in self.get_cmake_components(p):
+        if self.options.component:
+            packages = self.get_packages()
+            if len(packages) != 1:
+                raise common.PackageError("Can only specify one package when "
+                                          "specifying components")
+            p = packages[0]
+            for c in self.options.component:
                 self.do_cmake_install(self.get_build_directory(), p,
                                       component=c)
+        else:
+            for p in self.get_packages():
+                for c in self.get_cmake_components(p):
+                    self.do_cmake_install(self.get_build_directory(), p,
+                                          component=c)
 
 
 def install():
