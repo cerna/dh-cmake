@@ -153,7 +153,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
     def make_directory_in_tmp(self, name):
         path = os.path.join(self.tmp_dir.name, name)
-        os.mkdir(path)
+        os.makedirs(path)
         return path
 
     def run_debian_rules(self, rule, case=None):

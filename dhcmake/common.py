@@ -293,24 +293,32 @@ class DHCommon:
             for p in paths:
                 f.write("%s\n" % p)
 
-    def do_cmake_install(self, builddir, destdir, component=None,
-                         package=None, extra_args=None):
-        args = ["cmake", "--install", builddir]
+    def do_cmake_install(self, builddir, package, component=None, subdir=None,
+                         extra_args=None):
+        build_subdir = builddir
+        if subdir:
+            build_subdir = os.path.join(builddir, subdir)
+        args = ["cmake", "--install", build_subdir]
         if component:
             args += ["--component", component]
         if extra_args:
             args += extra_args
         env = os.environ.copy()
-        env["DESTDIR"] = os.path.abspath(destdir)
+        env["DESTDIR"] = os.path.abspath(self.get_tmpdir(package))
         self.do_cmd(args, env=env)
 
-        if package:
-            if component:
-                install_manifest = "install_manifest_%s.txt" % component
-            else:
-                install_manifest = "install_manifest.txt"
+        if component:
+            install_manifest = "install_manifest_%s.txt" % component
+        else:
+            install_manifest = "install_manifest.txt"
+        have_manifest = True
+        try:
             with open(os.path.join(builddir, install_manifest)) as f:
                 files = [os.path.join(self.options.sourcedir,
                                       os.path.relpath(l.rstrip("\n"), "/"))
                              for l in f]
+        except FileNotFoundError:
+            have_manifest = False
+        if have_manifest:
+            os.unlink(os.path.join(builddir, install_manifest))
             self.log_installed_files(package, files)

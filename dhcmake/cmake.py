@@ -30,9 +30,8 @@ class DHCMake(common.DHCommon):
         self.parse_args(args, make_arg_parser=self.install_make_arg_parser)
         for p in self.get_packages():
             for c in self.get_cmake_components(p):
-                self.do_cmake_install(self.get_build_directory(),
-                                      self.get_tmpdir(p), component=c,
-                                      package=p)
+                self.do_cmake_install(self.get_build_directory(), p,
+                                      component=c)
 
 
 def install():

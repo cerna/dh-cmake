@@ -73,27 +73,27 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
 
         self.run_cmd(["make"], cwd=self.build_dir)
 
-        self.install_all_dir = self.make_directory_in_tmp("install-all")
-        self.install_lib_dir = self.make_directory_in_tmp("install-lib")
-        self.install_dev_dir = self.make_directory_in_tmp("install-dev")
-
     def test_cmake_install_all(self):
         self.setup_do_cmake_install()
+        self.dh.tool_name = "dh_test_cmake_install_all"
         self.dh.parse_args([])
+        self.dh.options.sourcedir = "debian/tmp"
 
         self.dh.do_cmake_install(self.build_dir,
-                                 self.install_all_dir)
+                                 "libdh-cmake-test")
 
         self.assertFileTreeEqual(self.libraries_files | self.headers_files \
-                                 | self.namelinks_files, self.install_all_dir)
+                                 | self.namelinks_files, "debian/libdh-cmake-test")
 
     def test_cmake_install_subdirectory(self):
         self.setup_do_cmake_install()
+        self.dh.tool_name = "dh_test_cmake_install_subdirectory"
         self.dh.parse_args([])
+        self.dh.options.sourcedir = "debian/tmp"
 
         self.dh.do_cmake_install(
-            os.path.join(self.build_dir, "lib1"),
-            self.install_all_dir)
+            self.build_dir,
+            "libdh-cmake-test", subdir="lib1")
 
         self.assertFileTreeEqual(set(self.replace_arch_in_paths({
             "usr",
@@ -104,7 +104,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
             "usr/lib/{arch}/libdh-cmake-test-lib1.so.1.0",
             "usr/include",
             "usr/include/dh-cmake-test-lib1.h",
-        })), self.install_all_dir)
+        })), "debian/libdh-cmake-test")
 
     def test_cmake_install_one_component(self):
         self.setup_do_cmake_install()
@@ -113,11 +113,10 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.dh.options.sourcedir = "debian/tmp"
 
         self.dh.do_cmake_install(self.build_dir,
-                                 self.install_dev_dir,
-                                 component="Headers",
-                                 package="libdh-cmake-test-dev")
+                                 "libdh-cmake-test-dev",
+                                 component="Headers")
 
-        self.assertFileTreeEqual(self.headers_files, self.install_dev_dir)
+        self.assertFileTreeEqual(self.headers_files, "debian/libdh-cmake-test-dev")
         expected_contents = "\n".join(self.replace_arch_in_paths([
             "debian/tmp/usr/include/dh-cmake-test.h",
             "debian/tmp/usr/include/dh-cmake-test-lib1.h",

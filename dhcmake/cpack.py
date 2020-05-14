@@ -157,8 +157,8 @@ class DHCPack(common.DHCommon):
                             extra_args.append("--strip")
 
                         self.do_cmake_install(
-                                project["directory"], self.get_tmpdir(package),
-                                package=package, component=component,
+                                project["directory"], package,
+                                component=component,
                                 extra_args=extra_args)
 
 
