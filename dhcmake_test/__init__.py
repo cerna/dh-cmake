@@ -161,7 +161,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         if case:
             env["DH_CMAKE_CASE"] = case
 
-        self.run_cmd(["fakeroot", "debian/rules", rule], env=env)
+        self.run_cmd(["debian/rules", rule], env=env)
 
 
 class VolatileNamedTemporaryFileTestCase(KWTestCaseBase):

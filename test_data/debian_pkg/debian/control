@@ -6,6 +6,7 @@ Uploaders:
 Build-Depends:
     dh-cmake-compat (= 1),
     dh-cmake
+Rules-Requires-Root: no
 
 Package: libdh-cmake-test
 Architecture: any
