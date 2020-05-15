@@ -11,6 +11,8 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Added modernized compat mechanism with the pseudo-package dh-cmake-compat.
   * Added --component argument to dh_cmake_install.
   * dh_ctest_test now calls ctest instead of dh_auto_test.
+  * dh_cpack_substvars now ignores packages not specified by --package if it
+    is specified.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 

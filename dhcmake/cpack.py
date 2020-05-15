@@ -83,7 +83,7 @@ class DHCPack(common.DHCommon):
         for component in self.get_all_cpack_components(package):
             for component_dep in self.cpack_metadata["components"][component] \
                     ["dependencies"]:
-                for other_package, _, _ in self.get_all_packages():
+                for other_package in self.get_packages():
                     if component_dep in \
                             self.get_all_cpack_components(other_package):
                         deps.add(other_package)

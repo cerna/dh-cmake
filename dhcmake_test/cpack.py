@@ -149,6 +149,13 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.assertEqual({"libdh-cmake-test"},
                 self.dh.get_package_dependencies("libdh-cmake-test-dev"))
 
+    def test_get_package_dependencies_packages(self):
+        self.dh.generate(["--package", "libdh-cmake-test-dev"])
+        self.dh.read_cpack_metadata()
+
+        self.assertEqual(set(),
+                self.dh.get_package_dependencies("libdh-cmake-test-dev"))
+
     def test_substvars(self):
         self.dh.generate([])
         self.dh.substvars([])
@@ -156,6 +163,12 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         with open("debian/libdh-cmake-test-dev.substvars", "r") as f:
             self.assertEqual("cpack:Depends=libdh-cmake-test "
                     "(= ${binary:Version})\n", f.read())
+
+    def test_substvars_packages(self):
+        self.dh.generate([])
+        self.dh.substvars(["--package", "libdh-cmake-test-dev"])
+
+        self.assertFileNotExists("debian/libdh-cmake-test-dev.substvars")
 
     def test_install(self):
         self.dh.generate([])
