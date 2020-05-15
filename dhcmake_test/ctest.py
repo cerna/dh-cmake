@@ -548,7 +548,7 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                 tree = xml.etree.ElementTree.fromstring(f.read())
 
             tests = tree.findall("Testing/Test")
-            self.assertEqual(2, len(tests))
+            self.assertEqual(1, len(tests))
 
             test_true = self.get_single_element(tree.findall(
                 "Testing/Test[Name='TestTrue']"))

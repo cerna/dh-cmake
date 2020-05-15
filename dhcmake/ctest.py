@@ -88,6 +88,7 @@ class DHCTest(common.DHCommon):
                 args.append("-DDH_CTEST_SUBMIT_PARTS:STRING=" +
                         ";".join(self.options.parts))
 
+            args.extend(self.options.extra_args)
             self.do_cmd(args)
             return True
 
@@ -110,7 +111,7 @@ class DHCTest(common.DHCommon):
     def test(self, args=None):
         self.parse_args(args)
         if not self.do_ctest_step("test"):
-            self.do_cmd(["ctest", "-VV", *self.parsed_args],
+            self.do_cmd(["ctest", "-VV", *self.options.extra_args],
                         cwd=self.get_build_directory())
 
     def submit_make_arg_parser(self, parser):
