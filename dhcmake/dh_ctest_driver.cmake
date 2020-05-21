@@ -21,11 +21,11 @@ endfunction()
 
 if(DH_CTEST_STEP STREQUAL start)
 
-  set(_group_args)
-  if(DEFINED DH_CTEST_GROUP)
-    set(_group_args GROUP "${DH_CTEST_GROUP}")
+  set(_track_args)
+  if(DEFINED DH_CTEST_TRACK)
+    set(_track_args TRACK "${DH_CTEST_TRACK}")
   endif()
-  ctest_start("${DH_CTEST_DASHBOARD_MODEL}" ${_group_args})
+  ctest_start("${DH_CTEST_DASHBOARD_MODEL}" ${_track_args})
 
 elseif(DH_CTEST_STEP STREQUAL configure)
 
