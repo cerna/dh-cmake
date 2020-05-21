@@ -149,6 +149,22 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                 with self.assertRaises(StopIteration):
                     next(f)
 
+    def test_start_experimental_dir(self):
+        self.assertFileNotExists("dummydir/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start(["--ctest-testing-dir=dummydir"])
+            with open("dummydir/Testing/TAG", "r") as f:
+                self.assertRegex(next(f), "^[0-9]{8}-[0-9]{4}$")
+                self.assertEqual("Experimental", next(f).rstrip())
+                try:  # Extra line here as of CMake 3.12
+                    self.assertEqual("Experimental", next(f).rstrip())
+                except StopIteration:
+                    pass
+                with self.assertRaises(StopIteration):
+                    next(f)
+
     def test_start_nightly(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
 

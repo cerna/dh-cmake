@@ -48,6 +48,9 @@ class DHCTest(common.DHCommon):
             "--no-submit", action="store_true",
             help="Don't submit after each part")
         parser.add_argument(
+            "--ctest-testing-dir", action="store", default="debian/.ctest",
+            help="Directory in which to store CTest Testing/ directory")
+        parser.add_argument(
             "--ctest-build", action="store",
             help="Name of the CTest build")
         parser.add_argument(
@@ -67,8 +70,8 @@ class DHCTest(common.DHCommon):
             args = [
                 "ctest", "-VV", "-S", self.get_dh_ctest_driver(),
                 "-DDH_CTEST_SRCDIR:PATH=" + os.getcwd(),
-                "-DDH_CTEST_CTESTDIR:PATH=" + os.path.join(os.getcwd(),
-                                                           "debian/.ctest"),
+                "-DDH_CTEST_CTESTDIR:PATH=" + os.path.join(
+                    os.getcwd(), self.options.ctest_testing_dir),
                 "-DDH_CTEST_BUILDDIR:PATH=" + self.get_build_directory(),
                 "-DDH_CTEST_DASHBOARD_MODEL:STRING=" + dashboard_model,
                 "-DDH_CTEST_STEP:STRING=" + step,

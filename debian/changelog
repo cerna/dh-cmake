@@ -14,6 +14,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * dh_cpack_substvars now ignores packages not specified by --package if it
     is specified.
   * Added --ctest-build argument to dh_ctest_*.
+  * Added --ctest-testing-dir argument to dh_ctest_*.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 
