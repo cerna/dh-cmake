@@ -13,6 +13,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * dh_ctest_test now calls ctest instead of dh_auto_test.
   * dh_cpack_substvars now ignores packages not specified by --package if it
     is specified.
+  * Added --ctest-build-name argument to dh_ctest_*.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 
