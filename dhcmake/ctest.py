@@ -22,14 +22,37 @@ def format_args_for_ctest(args):
     return " ".join(format_arg_for_ctest(a) for a in args)
 
 
-def get_deb_ctest_option(name):
+def _get_deb_ctest_options():
     try:
         deb_ctest_options = os.environ["DEB_CTEST_OPTIONS"]
     except KeyError:
-        return None
+        return []
 
-    split = re.split("\\s+", deb_ctest_options)
-    for item in split:
+    result = []
+    current = ""
+    escape = False
+    quote = False
+    for c in deb_ctest_options:
+        if escape:
+            current += c
+            escape = False
+        elif c == "\\":
+            escape = True
+        elif c == '"':
+            quote = not quote
+        elif re.match("\\s", c) and not quote and current:
+            result.append(current)
+            current = ""
+        else:
+            current += c
+
+    if current:
+        result.append(current)
+    return result
+
+
+def get_deb_ctest_option(name):
+    for item in _get_deb_ctest_options():
         eq_split = item.split("=", 1)
         if eq_split[0] == name:
             if len(eq_split) > 1:

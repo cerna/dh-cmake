@@ -128,6 +128,14 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         with open("debian/.ctest/Testing/TAG", "r") as f:
             return next(f).rstrip()
 
+    def test_get_deb_ctest_option(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "opt1 opt2=val opt3=\"spaced value\" opt4=another\\ \\ space"):
+            self.assertEqual(True, ctest.get_deb_ctest_option("opt1"))
+            self.assertEqual("val", ctest.get_deb_ctest_option("opt2"))
+            self.assertEqual("spaced value", ctest.get_deb_ctest_option("opt3"))
+            self.assertEqual("another  space", ctest.get_deb_ctest_option("opt4"))
+
     def test_start_none(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
         self.dh.start([])
