@@ -13,7 +13,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * dh_ctest_test now calls ctest instead of dh_auto_test.
   * dh_cpack_substvars now ignores packages not specified by --package if it
     is specified.
-  * Added --ctest-build argument to dh_ctest_*.
+  * Added --ctest-build and --ctest-build-suffix arguments to dh_ctest_*.
   * Added --ctest-testing-dir argument to dh_ctest_*.
   * Added quoting and backslashes to DEB_CTEST_OPTIONS.
 

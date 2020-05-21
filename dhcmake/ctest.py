@@ -77,6 +77,9 @@ class DHCTest(common.DHCommon):
             "--ctest-build", action="store",
             help="Name of the CTest build")
         parser.add_argument(
+            "--ctest-build-suffix", action="store", default="",
+            help="Suffix to add to CTest build")
+        parser.add_argument(
             "extra_args", nargs="*")
 
     def get_dh_ctest_driver(self):
@@ -112,6 +115,7 @@ class DHCTest(common.DHCommon):
             build = get_deb_ctest_option("build")
             if self.options.ctest_build:
                 build = self.options.ctest_build
+            build += self.options.ctest_build_suffix
             if isinstance(build, str):
                 args.append("-DDH_CTEST_BUILD:STRING=" + build)
 
