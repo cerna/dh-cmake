@@ -48,7 +48,7 @@ class DHCTest(common.DHCommon):
             "--no-submit", action="store_true",
             help="Don't submit after each part")
         parser.add_argument(
-            "--ctest-build-name", action="store",
+            "--ctest-build", action="store",
             help="Name of the CTest build")
         parser.add_argument(
             "extra_args", nargs="*")
@@ -84,8 +84,8 @@ class DHCTest(common.DHCommon):
                 args.append("-DDH_CTEST_SITE:STRING=" + site)
 
             build = get_deb_ctest_option("build")
-            if self.options.ctest_build_name:
-                build = self.options.ctest_build_name
+            if self.options.ctest_build:
+                build = self.options.ctest_build
             if isinstance(build, str):
                 args.append("-DDH_CTEST_BUILD:STRING=" + build)
 

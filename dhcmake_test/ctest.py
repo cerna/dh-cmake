@@ -227,7 +227,7 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
     def test_configure_experimental_site_build_names_arg(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental site=debtest"):
-            self.dh.start(["--ctest-build-name=debian-cmake-test"])
+            self.dh.start(["--ctest-build=debian-cmake-test"])
             self.dh.configure([])
             date = self.get_testing_tag_date()
 
