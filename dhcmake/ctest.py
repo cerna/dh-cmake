@@ -112,10 +112,15 @@ class DHCTest(common.DHCommon):
             if isinstance(site, str):
                 args.append("-DDH_CTEST_SITE:STRING=" + site)
 
+            group = get_deb_ctest_option("group")
+            if isinstance(group, str):
+                args.append("-DDH_CTEST_GROUP:STRING=" + group)
+
             build = get_deb_ctest_option("build")
             if self.options.ctest_build:
                 build = self.options.ctest_build
-            build += self.options.ctest_build_suffix
+            if self.options.ctest_build_suffix:
+                build += self.options.ctest_build_suffix
             if isinstance(build, str):
                 args.append("-DDH_CTEST_BUILD:STRING=" + build)
 

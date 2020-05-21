@@ -16,6 +16,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Added --ctest-build and --ctest-build-suffix arguments to dh_ctest_*.
   * Added --ctest-testing-dir argument to dh_ctest_*.
   * Added quoting and backslashes to DEB_CTEST_OPTIONS.
+  * Added group option to DEB_CTEST_OPTIONS.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 
