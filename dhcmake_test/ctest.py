@@ -632,6 +632,34 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
             self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
 
+    def test_test_experimental_bad_catchfailed_submit(self):
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental catchfailed submit"):
+            self.dh.start([])
+            self.dh.configure([
+                "--", "-DDH_CMAKE_ENABLE_BAD_TEST:BOOL=ON"])
+            self.dh.build([])
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.dh.test([])
+            date = self.get_testing_tag_date()
+
+            with open(os.path.join("debian/.ctest/Testing", date, "Test.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            tests = tree.findall("Testing/Test")
+            self.assertEqual(2, len(tests))
+
+            test_true = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestTrue']"))
+            self.assertEqual("passed", test_true.get("Status"))
+
+            test_false = self.get_single_element(tree.findall(
+                "Testing/Test[Name='TestFalse']"))
+            self.assertEqual("failed", test_false.get("Status"))
+
+            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+
     def test_submit_none(self):
         self.dh.start([])
         self.dh.configure(["-O--no-submit"])

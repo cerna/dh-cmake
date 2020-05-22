@@ -318,7 +318,10 @@ Note: in the default mode, because `dh_ctest_test` simply calls `ctest`
 without dashboard mode, it will still fail if any of the tests fail. However,
 in dashboard mode, CTest allows tests to fail without failing the entire build
 process, and `dh_ctest_test` reflects this behavior, so that the package can
-still build in development even if some of the tests fail.
+still build in development even if some of the tests fail. You can override
+this behavior by passing `catchfailed` in `DEB_CTEST_OPTIONS`, which will cause
+`dh_ctest_test` to return a non-zero exit code if any of the tests fail in
+dashboard mode.
 
 ### A Word About Privacy
 

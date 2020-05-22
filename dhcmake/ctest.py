@@ -130,6 +130,11 @@ class DHCTest(common.DHCommon):
             if isinstance(build, str):
                 args.append("-DDH_CTEST_BUILD:STRING=" + build)
 
+            catchfailed = "0"
+            if get_deb_ctest_option("catchfailed"):
+                catchfailed = "1"
+            args.append("-DDH_CTEST_CATCHFAILED:BOOL=" + catchfailed)
+
             if step == "submit" and self.options.parts:
                 args.append("-DDH_CTEST_SUBMIT_PARTS:STRING=" +
                         ";".join(self.options.parts))

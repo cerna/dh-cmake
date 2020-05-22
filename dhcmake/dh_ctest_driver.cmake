@@ -46,9 +46,15 @@ elseif(DH_CTEST_STEP STREQUAL build)
 elseif(DH_CTEST_STEP STREQUAL test)
 
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
-  ctest_test(BUILD "${DH_CTEST_BUILDDIR}")
+  ctest_test(BUILD "${DH_CTEST_BUILDDIR}" RETURN_VALUE _result)
 
   step_submit(Test)
+
+  if(DH_CTEST_CATCHFAILED AND _result)
+    message(FATAL_ERROR
+      "One or more tests failed and DEB_CTEST_OPTIONS=catchfailed was set. "
+      "Aborting.")
+  endif()
 
 elseif(DH_CTEST_STEP STREQUAL submit)
 
