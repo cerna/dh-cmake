@@ -122,6 +122,10 @@ class DHCTest(common.DHCommon):
             if isinstance(track, str):
                 args.append("-DDH_CTEST_TRACK:STRING=" + track)
 
+            revision = get_deb_ctest_option("revision")
+            if isinstance(revision, str):
+                args.append("-DDH_CTEST_VERSION_OVERRIDE:STRING=" + revision)
+
             build = get_deb_ctest_option("build")
             if self.options.ctest_build:
                 build = self.options.ctest_build
@@ -147,6 +151,12 @@ class DHCTest(common.DHCommon):
     def start(self, args=None):
         self.parse_args(args)
         self.do_ctest_step("start")
+
+    @common.DHEntryPoint("dh_ctest_update")
+    def update(self, args=None):
+        self.parse_args(args)
+        if get_deb_ctest_option("update"):
+            self.do_ctest_step("update")
 
     @common.DHEntryPoint("dh_ctest_configure")
     def configure(self, args=None):
@@ -181,6 +191,11 @@ class DHCTest(common.DHCommon):
 def start():
     dhctest = DHCTest()
     dhctest.start()
+
+
+def update():
+    dhctest = DHCTest()
+    dhctest.update()
 
 
 def configure():

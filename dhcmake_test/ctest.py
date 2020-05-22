@@ -198,6 +198,188 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                 with self.assertRaises(StopIteration):
                     next(f)
 
+    def test_no_update_experimental(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental"):
+            self.dh.start([])
+            self.dh.update([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileNotExists(os.path.join("debian/.ctest/Testing", date,
+                                                  "Update.xml"))
+
+    def test_update_experimental(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental update"):
+            self.run_cmd(["git", "init", "."])
+            self.run_cmd(["git", "add", "."])
+            self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
+                              "GIT_AUTHOR_NAME": "Kitware Robot",
+                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                              "GIT_COMMITTER_NAME": "Kitware Robot",
+                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+                          })
+            self.dh.start([])
+            self.dh.update([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Update.xml"))
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Update.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            update_type = self.get_single_element(tree.findall(
+                "UpdateType"))
+            self.assertEqual("GIT", update_type.text)
+            revision = self.get_single_element(tree.findall(
+                "Revision"))
+            # This SHA-1 is deterministic, so we can hard-code it
+            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
+                             revision.text)
+
+    def test_update_experimental_submit(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental update submit"):
+            self.run_cmd(["git", "init", "."])
+            self.run_cmd(["git", "add", "."])
+            self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
+                              "GIT_AUTHOR_NAME": "Kitware Robot",
+                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                              "GIT_COMMITTER_NAME": "Kitware Robot",
+                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+                          })
+            self.dh.start([])
+            self.dh.update([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Update.xml"))
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Update.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            update_type = self.get_single_element(tree.findall(
+                "UpdateType"))
+            self.assertEqual("GIT", update_type.text)
+            revision = self.get_single_element(tree.findall(
+                "Revision"))
+            # This SHA-1 is deterministic, so we can hard-code it
+            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
+                             revision.text)
+
+            self.assertFilesSubmittedEqual({"Update"})
+
+    def test_update_experimental_no_submit(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental update submit"):
+            self.run_cmd(["git", "init", "."])
+            self.run_cmd(["git", "add", "."])
+            self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
+                              "GIT_AUTHOR_NAME": "Kitware Robot",
+                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                              "GIT_COMMITTER_NAME": "Kitware Robot",
+                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+                          })
+            self.dh.start([])
+            self.dh.update(["--no-submit"])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Update.xml"))
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Update.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            update_type = self.get_single_element(tree.findall(
+                "UpdateType"))
+            self.assertEqual("GIT", update_type.text)
+            revision = self.get_single_element(tree.findall(
+                "Revision"))
+            # This SHA-1 is deterministic, so we can hard-code it
+            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
+                             revision.text)
+
+            self.assertFilesSubmittedEqual({})
+
+    def test_update_experimental_revision(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental update revision=1.0"):
+            self.dh.start([])
+            self.dh.update([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Update.xml"))
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Update.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            update_type = self.get_single_element(tree.findall(
+                "UpdateType"))
+            self.assertEqual("GIT", update_type.text)
+            revision = self.get_single_element(tree.findall(
+                "Revision"))
+            self.assertEqual("1.0", revision.text)
+
+    def test_update_experimental_revision_git(self):
+        self.assertFileNotExists("debian/.ctest/Testing/TAG")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "model=Experimental update revision=1.0"):
+            self.run_cmd(["git", "init", "."])
+            self.run_cmd(["git", "add", "."])
+            self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
+                              "GIT_AUTHOR_NAME": "Kitware Robot",
+                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                              "GIT_COMMITTER_NAME": "Kitware Robot",
+                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+                          })
+            self.dh.start([])
+            self.dh.update([])
+            date = self.get_testing_tag_date()
+
+            self.assertFileExists(os.path.join("debian/.ctest/Testing", date,
+                                               "Update.xml"))
+
+            with open(os.path.join("debian/.ctest/Testing", date,
+                                   "Update.xml"),
+                      "r") as f:
+                tree = xml.etree.ElementTree.fromstring(f.read())
+
+            update_type = self.get_single_element(tree.findall(
+                "UpdateType"))
+            self.assertEqual("GIT", update_type.text)
+            revision = self.get_single_element(tree.findall(
+                "Revision"))
+            self.assertEqual("1.0", revision.text)
+
     def test_configure_none(self):
         self.dh.start([])
         self.dh.configure([])

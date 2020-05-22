@@ -188,18 +188,19 @@ development and trying to achieve Debian policy compliance. It is designed to
 monitor the health of the project when being built in a Debian environment. It
 is not primarily intended for use in production packages.
 
-`dh-sequence-ctest` adds four new commands to the Debhelper `build` sequence:
+`dh-sequence-ctest` adds five new commands to the Debhelper `build` sequence:
 
 * `dh_ctest_start`
+* `dh_ctest_update`
 * `dh_ctest_configure`
 * `dh_ctest_build`
 * `dh_ctest_test`
 
 By default, the `configure`, `build`, and `test` steps are simple wrappers
-around their `dh_auto_*` counterparts, and the `start` step does nothing.
-However, they recognize a new environment variable, `DEB_CTEST_OPTIONS`, which
-can be used to activate CTest's dashboard mode. To activate dashboard mode, do
-the following:
+around their `dh_auto_*` counterparts, and the `start` and `update` steps do
+nothing. However, they recognize a new environment variable,
+`DEB_CTEST_OPTIONS`, which can be used to activate CTest's dashboard mode. To
+activate dashboard mode, do the following:
 
 ```bash
 DEB_CTEST_OPTIONS="model=Experimental submit" dpkg-buildpackage
@@ -211,11 +212,11 @@ can also set it to "Continuous" or "Nightly". The `submit` argument tells each
 default, due to the fact that the package may be building in an environment
 without internet access.)
 
-When used without any options, the `configure`, `build`, and `test` steps each
-submit their own results to CDash upon completion, but you can disable this
-behavior by passing a `--no-submit` option to them. You can also submit results
-explicitly with another optional command, `dh_ctest_submit`, which is not
-included in `dh-sequence-ctest` by default.
+When used without any options, the `update` `configure`, `build`, and `test`
+steps each submit their own results to CDash upon completion, but you can
+disable this behavior by passing a `--no-submit` option to them. You can also
+submit results explicitly with another optional command, `dh_ctest_submit`,
+which is not included in `dh-sequence-ctest` by default.
 
 Note: if you pass `--no-submit`, you must pass it in the form `-O--no-submit`,
 because the `dh_ctest_*` commands pass ALL of their arguments to their
@@ -295,6 +296,11 @@ the test suite at the same time.
 Note: if you are running the build in an isolated environment, and you want to
 submit the test results to CDash, you will need to make sure that internet
 access is enabled in the build environment.
+
+Note: by default, `dh_ctest_update` does nothing, due to the fact that there
+may not be any version control information present. You can turn on the update
+step by adding `update` to `DEB_CTEST_OPTIONS`. If you want to manually specify
+a version for `dh_ctest_update`, you can pass it as `revision=<revision>`.
 
 Because the CTest commands are wrappers around their `dh_auto_*` counterparts,
 you can pass arguments to them the way you would to the `dh_auto_*` commands.

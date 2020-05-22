@@ -81,8 +81,7 @@ class KWTestCaseBase(TestCase):
 
     @classmethod
     def run_cmd(cls, args, cwd=None, env=None):
-        subprocess.run(args, cwd=cwd, env=env, stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE, check=True)
+        subprocess.run(args, cwd=cwd, env=env, check=True)
 
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):
