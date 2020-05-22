@@ -40,11 +40,17 @@ def _get_deb_ctest_options():
             escape = True
         elif c == '"':
             quote = not quote
-        elif re.match("\\s", c) and not quote and current:
-            result.append(current)
-            current = ""
+        elif re.match("\\s", c) and not quote:
+            if current:
+                result.append(current)
+                current = ""
         else:
             current += c
+
+    if quote:
+        raise ValueError("Unclosed quote")
+    if escape:
+        raise ValueError("Unclosed backslash")
 
     if current:
         result.append(current)

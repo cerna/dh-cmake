@@ -130,11 +130,21 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_deb_ctest_option(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
-                                     "opt1 opt2=val opt3=\"spaced value\" opt4=another\\ \\ space"):
+                                     "opt1 opt2=val  opt3=\"spaced value\" opt4=another\\ \\ space"):
             self.assertEqual(True, ctest.get_deb_ctest_option("opt1"))
             self.assertEqual("val", ctest.get_deb_ctest_option("opt2"))
             self.assertEqual("spaced value", ctest.get_deb_ctest_option("opt3"))
             self.assertEqual("another  space", ctest.get_deb_ctest_option("opt4"))
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "opt1=\"a"):
+            with self.assertRaisesRegex(ValueError, "Unclosed quote"):
+                ctest.get_deb_ctest_option("opt1")
+
+        with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
+                                     "opt1=a\\"):
+            with self.assertRaisesRegex(ValueError, "Unclosed backslash"):
+                ctest.get_deb_ctest_option("opt1")
 
     def test_start_none(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
