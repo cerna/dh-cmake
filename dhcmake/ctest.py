@@ -150,7 +150,7 @@ class DHCTest(common.DHCommon):
     @common.DHEntryPoint("dh_ctest_clean")
     def clean(self, args=None):
         self.parse_args(args)
-        self.do_cmd(["dh_clean", self.options.ctest_testing_dir + "/"])
+        self.do_cmd(["rm", "-rf", self.options.ctest_testing_dir + "/"])
 
     @common.DHEntryPoint("dh_ctest_start")
     def start(self, args=None):
