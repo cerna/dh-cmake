@@ -46,7 +46,7 @@ elseif(DH_CTEST_STEP STREQUAL update)
   endif()
 
   ctest_start("${DH_CTEST_DASHBOARD_MODEL}" APPEND)
-  ctest_update()
+  ctest_update(CAPTURE_CMAKE_ERROR _result)
 
   step_submit(Update)
 
