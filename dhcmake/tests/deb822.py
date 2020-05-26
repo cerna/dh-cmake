@@ -13,8 +13,8 @@ class Deb822TestCase(KWTestCaseBase):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         test_data_dir = os.path.join(test_dir, "data")
 
-        with open(os.path.join(test_data_dir, "debian_pkg/debian/control"), \
-                "r") as f:
+        with open(os.path.join(test_data_dir, "debian_pkg/debian/control"),
+                  "r") as f:
             source, packages = deb822.read_control(f)
 
         self.assertEqual("dh-cmake-test", source["source"])

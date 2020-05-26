@@ -90,7 +90,7 @@ class DHCTest(common.DHCommon):
 
     def get_dh_ctest_driver(self):
         return pkg_resources.resource_filename(__name__,
-            "dh_ctest_driver.cmake")
+                                               "dh_ctest_driver.cmake")
 
     def do_ctest_step(self, step, cmd=None):
         dashboard_model = get_deb_ctest_option("model")
@@ -109,8 +109,8 @@ class DHCTest(common.DHCommon):
                 "-DDH_CTEST_STEP:STRING=" + step,
             ]
             if cmd:
-                args.append("-DDH_CTEST_RUN_CMD:STRING=" \
-                    + format_args_for_ctest([cmd, *self.parsed_args]))
+                args.append("-DDH_CTEST_RUN_CMD:STRING="
+                            + format_args_for_ctest([cmd, *self.parsed_args]))
             if get_deb_ctest_option("submit") and not self.options.no_submit:
                 args.append("-DDH_CTEST_STEP_SUBMIT:BOOL=ON")
 
@@ -141,7 +141,7 @@ class DHCTest(common.DHCommon):
 
             if step == "submit" and self.options.parts:
                 args.append("-DDH_CTEST_SUBMIT_PARTS:STRING=" +
-                        ";".join(self.options.parts))
+                            ";".join(self.options.parts))
 
             args.extend(self.options.extra_args)
             self.do_cmd(args)

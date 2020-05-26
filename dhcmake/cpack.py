@@ -26,7 +26,7 @@ class DHCPack(common.DHCommon):
                             retval.append(group)
                         else:
                             raise ValueError(
-                                    "Invalid CPack components in %s" % package)
+                                "Invalid CPack components in %s" % package)
             return retval
         else:
             return []
@@ -43,8 +43,8 @@ class DHCPack(common.DHCommon):
                             retval.append(group)
                         else:
                             raise ValueError(
-                                    "Invalid CPack component groups in %s" %
-                                        package)
+                                "Invalid CPack component groups in %s" %
+                                package)
             return retval
         else:
             return []
@@ -57,14 +57,13 @@ class DHCPack(common.DHCommon):
             return set()
         visited.add(group)
 
-        all_components = set(self.cpack_metadata["componentGroups"][group] \
-                ["components"])
+        all_components = set(self.cpack_metadata["componentGroups"][group]
+                             ["components"])
 
-        for sub_group in self.cpack_metadata["componentGroups"][group] \
-                ["subgroups"]:
+        for sub_group in self.cpack_metadata["componentGroups"][group]["subgroups"]:
             all_components.update(
-                    self.get_all_cpack_components_for_group(
-                        sub_group, visited))
+                self.get_all_cpack_components_for_group(
+                    sub_group, visited))
 
         return all_components
 
@@ -73,7 +72,7 @@ class DHCPack(common.DHCommon):
 
         for group in self.get_cpack_component_groups(package):
             all_components.update(
-                    self.get_all_cpack_components_for_group(group))
+                self.get_all_cpack_components_for_group(group))
 
         return all_components
 
@@ -81,8 +80,7 @@ class DHCPack(common.DHCommon):
         deps = set()
 
         for component in self.get_all_cpack_components(package):
-            for component_dep in self.cpack_metadata["components"][component] \
-                    ["dependencies"]:
+            for component_dep in self.cpack_metadata["components"][component]["dependencies"]:
                 for other_package in self.get_packages():
                     if component_dep in \
                             self.get_all_cpack_components(other_package):
@@ -95,13 +93,13 @@ class DHCPack(common.DHCommon):
         self.parse_args(args)
 
         cmd_args = [
-                "cpack",
-                "--config",
-                os.path.join(self.get_build_directory(), "CPackConfig.cmake"),
-                "-G", "External",
-                "-D", "CPACK_PACKAGE_FILE_NAME=cpack-metadata",
-                "-D", "CPACK_EXT_REQUESTED_VERSIONS=1.0",
-                "-B", "debian/.cpack",
+            "cpack",
+            "--config",
+            os.path.join(self.get_build_directory(), "CPackConfig.cmake"),
+            "-G", "External",
+            "-D", "CPACK_PACKAGE_FILE_NAME=cpack-metadata",
+            "-D", "CPACK_EXT_REQUESTED_VERSIONS=1.0",
+            "-B", "debian/.cpack",
         ]
         self.do_cmd(cmd_args)
 
@@ -112,7 +110,7 @@ class DHCPack(common.DHCommon):
 
         for package in self.get_packages():
             depends = ", ".join(dep + " (= ${binary:Version})" for dep in
-                    sorted(self.get_package_dependencies(package)))
+                                sorted(self.get_package_dependencies(package)))
             if depends:
                 self.write_substvar("cpack:Depends", depends, package)
 
@@ -144,22 +142,22 @@ class DHCPack(common.DHCommon):
                             pass
 
                         # TODO Fix this in CMake (https://gitlab.kitware.com/cmake/cmake/-/issues/20700)
-                        #try:
+                        # try:
                         #    extra_args.append(
                         #            "-DCMAKE_INSTALL_DEFAULT_"
                         #            "DIRECTORY_PERMISSIONS:STRING=" +
                         #            self.cpack_metadata[
                         #                "defaultDirectoryPermissions"])
-                        #except KeyError:
+                        # except KeyError:
                         #    pass
 
                         if self.cpack_metadata["stripFiles"]:
                             extra_args.append("--strip")
 
                         self.do_cmake_install(
-                                project["directory"], package,
-                                component=component,
-                                extra_args=extra_args)
+                            project["directory"], package,
+                            component=component,
+                            extra_args=extra_args)
 
 
 def generate():

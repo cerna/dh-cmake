@@ -82,7 +82,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.dh.do_cmake_install(self.build_dir,
                                  "libdh-cmake-test")
 
-        self.assertFileTreeEqual(self.libraries_files | self.headers_files \
+        self.assertFileTreeEqual(self.libraries_files | self.headers_files
                                  | self.namelinks_files, "debian/libdh-cmake-test")
 
     def test_cmake_install_subdirectory(self):
@@ -116,15 +116,16 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
                                  "libdh-cmake-test-dev",
                                  component="Headers")
 
-        self.assertFileTreeEqual(self.headers_files, "debian/libdh-cmake-test-dev")
+        self.assertFileTreeEqual(
+            self.headers_files, "debian/libdh-cmake-test-dev")
         expected_contents = "\n".join(self.replace_arch_in_paths([
             "debian/tmp/usr/include/dh-cmake-test.h",
             "debian/tmp/usr/include/dh-cmake-test-lib1.h",
             "debian/tmp/usr/include/dh-cmake-test-lib2.h",
         ])) + "\n"
         self.assertFileContentsEqual(expected_contents,
-            "debian/.debhelper/generated/libdh-cmake-test-dev/"
-            "installed-by-dh_test_cmake_install_one_component")
+                                     "debian/.debhelper/generated/libdh-cmake-test-dev/"
+                                     "installed-by-dh_test_cmake_install_one_component")
 
     def test_get_cmake_components(self):
         self.dh.parse_args([])
@@ -192,7 +193,7 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
     def test_dh_cmake_install_tmpdir(self):
         self.do_dh_cmake_install(["--tmpdir=debian/tmp"])
 
-        self.assertFileTreeEqual(self.libraries_files | self.headers_files \
+        self.assertFileTreeEqual(self.libraries_files | self.headers_files
                                  | self.namelinks_files,
                                  "debian/tmp")
 
@@ -200,10 +201,10 @@ class DHCMakeTestCase(DebianSourcePackageTestCaseBase):
         self.run_debian_rules("build", "cmake")
         self.run_debian_rules("install", "cmake")
 
-        self.assertFileTreeEqual(self.libraries_files | self.shlibs_files \
+        self.assertFileTreeEqual(self.libraries_files | self.shlibs_files
                                  | self.libdh_cmake_test_files,
                                  "debian/libdh-cmake-test")
 
-        self.assertFileTreeEqual(self.headers_files | self.namelinks_files \
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files
                                  | self.libdh_cmake_test_dev_files,
                                  "debian/libdh-cmake-test-dev")

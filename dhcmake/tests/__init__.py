@@ -71,9 +71,9 @@ class KWTestCaseBase(TestCase):
 
     @classmethod
     def replace_arch_in_paths(cls, paths):
-        return (p.format(arch=dhcmake.arch \
-                .dpkg_architecture()["DEB_HOST_GNU_TYPE"])
-            for p in paths)
+        return (p.format(arch=dhcmake.arch
+                         .dpkg_architecture()["DEB_HOST_GNU_TYPE"])
+                for p in paths)
 
     def get_single_element(self, l):
         self.assertEqual(1, len(l))
@@ -118,8 +118,10 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         cls.run_cmd([os.path.join(root_dir, "setup.py"), "install_data",
                      "--install-dir=" + cls.install_dir.name])
 
-        cls.old_path = cls.push_path("PATH", os.path.join(cls.install_dir.name, "bin"))
-        cls.old_perl5lib = cls.push_path("PERL5LIB", os.path.join(cls.install_dir.name, "share/perl5"))
+        cls.old_path = cls.push_path(
+            "PATH", os.path.join(cls.install_dir.name, "bin"))
+        cls.old_perl5lib = cls.push_path(
+            "PERL5LIB", os.path.join(cls.install_dir.name, "share/perl5"))
         cls.old_pythonpath = cls.push_path("PYTHONPATH", root_dir)
 
     @classmethod

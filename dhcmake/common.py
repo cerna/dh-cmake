@@ -77,7 +77,7 @@ class DHCommon:
     def _set_compat(self, compat):
         if self._compat is not None and self._compat != compat:
             raise CompatError("Conflicting compat levels: %i, %i" %
-                    (self._compat, compat))
+                              (self._compat, compat))
         self._compat = compat
 
     def compat(self):
@@ -108,12 +108,12 @@ class DHCommon:
 
             if self._compat < MIN_COMPAT:
                 raise CompatError(
-                        "Compat level %i too old (must be %i or newer)" %
-                            (self._compat, MIN_COMPAT))
+                    "Compat level %i too old (must be %i or newer)" %
+                    (self._compat, MIN_COMPAT))
             elif self._compat > MAX_COMPAT:
                 raise CompatError(
-                        "Compat level %i too new (must be %i or older)" %
-                            (self._compat, MAX_COMPAT))
+                    "Compat level %i too new (must be %i or older)" %
+                    (self._compat, MAX_COMPAT))
 
         return self._compat
 
@@ -171,7 +171,7 @@ class DHCommon:
             "-B", "--builddirectory", action="store",
             help="Build directory for out of source building",
             default="obj-"
-                + arch.dpkg_architecture()["DEB_HOST_GNU_TYPE"])
+            + arch.dpkg_architecture()["DEB_HOST_GNU_TYPE"])
 
     def print_cmd(self, args, cwd=None):
         if self.options.verbose:
@@ -320,7 +320,7 @@ class DHCommon:
             with open(os.path.join(builddir, install_manifest)) as f:
                 files = [os.path.join(self.options.sourcedir,
                                       os.path.relpath(l.rstrip("\n"), "/"))
-                             for l in f]
+                         for l in f]
         except FileNotFoundError:
             have_manifest = False
         if have_manifest:

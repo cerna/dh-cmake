@@ -134,8 +134,10 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
                                      "opt1 opt2=val  opt3=\"spaced value\" opt4=another\\ \\ space"):
             self.assertEqual(True, ctest.get_deb_ctest_option("opt1"))
             self.assertEqual("val", ctest.get_deb_ctest_option("opt2"))
-            self.assertEqual("spaced value", ctest.get_deb_ctest_option("opt3"))
-            self.assertEqual("another  space", ctest.get_deb_ctest_option("opt4"))
+            self.assertEqual(
+                "spaced value", ctest.get_deb_ctest_option("opt3"))
+            self.assertEqual("another  space",
+                             ctest.get_deb_ctest_option("opt4"))
 
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "opt1=\"a"):
@@ -233,13 +235,13 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.run_cmd(["git", "init", "."])
             self.run_cmd(["git", "add", "."])
             self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
-                              "GIT_AUTHOR_NAME": "Kitware Robot",
-                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
-                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
-                              "GIT_COMMITTER_NAME": "Kitware Robot",
-                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
-                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
-                          })
+                "GIT_AUTHOR_NAME": "Kitware Robot",
+                "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                "GIT_COMMITTER_NAME": "Kitware Robot",
+                "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+            })
             self.dh.start([])
             self.dh.update([])
             date = self.get_testing_tag_date()
@@ -258,7 +260,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             revision = self.get_single_element(tree.findall(
                 "Revision"))
             self.assertEqual(
-                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                subprocess.check_output(
+                    ["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
                 revision.text)
 
     def test_update_experimental_modified(self):
@@ -269,13 +272,13 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.run_cmd(["git", "init", "."])
             self.run_cmd(["git", "add", "."])
             self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
-                              "GIT_AUTHOR_NAME": "Kitware Robot",
-                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
-                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
-                              "GIT_COMMITTER_NAME": "Kitware Robot",
-                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
-                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
-                          })
+                "GIT_AUTHOR_NAME": "Kitware Robot",
+                "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                "GIT_COMMITTER_NAME": "Kitware Robot",
+                "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+            })
             os.unlink("CMakeLists.txt")
             self.dh.start([])
             self.dh.update([])
@@ -295,7 +298,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             revision = self.get_single_element(tree.findall(
                 "Revision"))
             self.assertEqual(
-                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                subprocess.check_output(
+                    ["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
                 revision.text)
 
     def test_update_experimental_submit(self):
@@ -306,13 +310,13 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.run_cmd(["git", "init", "."])
             self.run_cmd(["git", "add", "."])
             self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
-                              "GIT_AUTHOR_NAME": "Kitware Robot",
-                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
-                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
-                              "GIT_COMMITTER_NAME": "Kitware Robot",
-                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
-                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
-                          })
+                "GIT_AUTHOR_NAME": "Kitware Robot",
+                "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                "GIT_COMMITTER_NAME": "Kitware Robot",
+                "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+            })
             self.dh.start([])
             self.dh.update([])
             date = self.get_testing_tag_date()
@@ -331,7 +335,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             revision = self.get_single_element(tree.findall(
                 "Revision"))
             self.assertEqual(
-                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                subprocess.check_output(
+                    ["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
                 revision.text)
 
             self.assertFilesSubmittedEqual({"Update"})
@@ -344,13 +349,13 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.run_cmd(["git", "init", "."])
             self.run_cmd(["git", "add", "."])
             self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
-                              "GIT_AUTHOR_NAME": "Kitware Robot",
-                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
-                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
-                              "GIT_COMMITTER_NAME": "Kitware Robot",
-                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
-                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
-                          })
+                "GIT_AUTHOR_NAME": "Kitware Robot",
+                "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                "GIT_COMMITTER_NAME": "Kitware Robot",
+                "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+            })
             self.dh.start([])
             self.dh.update(["--no-submit"])
             date = self.get_testing_tag_date()
@@ -369,7 +374,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             revision = self.get_single_element(tree.findall(
                 "Revision"))
             self.assertEqual(
-                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                subprocess.check_output(
+                    ["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
                 revision.text)
 
             self.assertFilesSubmittedEqual({})
@@ -406,13 +412,13 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.run_cmd(["git", "init", "."])
             self.run_cmd(["git", "add", "."])
             self.run_cmd(["git", "commit", "-m", "Initial commit"], env={
-                              "GIT_AUTHOR_NAME": "Kitware Robot",
-                              "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
-                              "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
-                              "GIT_COMMITTER_NAME": "Kitware Robot",
-                              "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
-                              "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
-                          })
+                "GIT_AUTHOR_NAME": "Kitware Robot",
+                "GIT_AUTHOR_EMAIL": "kwrobot@kitware.com",
+                "GIT_AUTHOR_DATE": "2020.01.01T00:00:00",
+                "GIT_COMMITTER_NAME": "Kitware Robot",
+                "GIT_COMMITTER_EMAIL": "kwrobot@kitware.com",
+                "GIT_COMMITTER_DATE": "2020.01.01T00:00:00",
+            })
             self.dh.start([])
             self.dh.update([])
             date = self.get_testing_tag_date()
@@ -443,7 +449,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
     def test_configure_none_bad(self):
         self.dh.start([])
         with self.assertRaises(subprocess.CalledProcessError):
-            self.dh.configure(["--", "-DDH_CMAKE_ENABLE_BAD_CONFIGURE:BOOL=ON"])
+            self.dh.configure(
+                ["--", "-DDH_CMAKE_ENABLE_BAD_CONFIGURE:BOOL=ON"])
 
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
         self.assertFileExists(os.path.join(self.dh.get_build_directory(),
@@ -921,7 +928,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.dh.test(["-O--no-submit"])
             self.dh.submit([])
 
-            self.assertFilesSubmittedEqual({"Configure", "Build", "Test", "Done"})
+            self.assertFilesSubmittedEqual(
+                {"Configure", "Build", "Test", "Done"})
 
     def test_submit_experimental_submit_parts(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",

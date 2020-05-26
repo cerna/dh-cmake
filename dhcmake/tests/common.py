@@ -59,7 +59,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_packages_whitelist_short(self):
         self.dh.parse_args(["-plibdh-cmake-test-dev",
-                                      "-plibdh-cmake-test-doc"])
+                            "-plibdh-cmake-test-doc"])
 
         self.check_packages({
             "libdh-cmake-test-dev",
@@ -68,7 +68,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_packages_whitelist_long(self):
         self.dh.parse_args(["--package", "libdh-cmake-test-dev",
-                                      "--package", "libdh-cmake-test-doc"])
+                            "--package", "libdh-cmake-test-doc"])
 
         self.check_packages({
             "libdh-cmake-test-dev",
@@ -77,7 +77,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_packages_blacklist_short(self):
         self.dh.parse_args(["-Nlibdh-cmake-test-dev",
-                                      "-Nlibdh-cmake-test-doc"])
+                            "-Nlibdh-cmake-test-doc"])
 
         self.check_packages({
             "libdh-cmake-test",
@@ -87,7 +87,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_packages_blacklist_long(self):
         self.dh.parse_args(["--no-package", "libdh-cmake-test-dev",
-                                      "--no-package", "libdh-cmake-test-doc"])
+                            "--no-package", "libdh-cmake-test-doc"])
 
         self.check_packages({
             "libdh-cmake-test",
@@ -191,8 +191,8 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
         with self.dh.read_package_file(
                 "libdh-cmake-test", "cmake-components") as f:
             self.assertEqual(
-                    "# This file tests both comments and blank lines\n\n"
-                    "Libraries\n", f.read())
+                "# This file tests both comments and blank lines\n\n"
+                "Libraries\n", f.read())
         with self.dh.read_package_file(
                 "libdh-cmake-test-dev", "cmake-components") as f:
             self.assertEqual("Headers\nNamelinks\n", f.read())
@@ -256,9 +256,9 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
             print(common.MIN_COMPAT - 1, file=f)
 
         with self.assertRaisesRegex(
-                common.CompatError,
-                r"Compat level %i too old \(must be %i or newer\)"
-                    % (common.MIN_COMPAT - 1, common.MIN_COMPAT)):
+            common.CompatError,
+            r"Compat level %i too old \(must be %i or newer\)"
+                % (common.MIN_COMPAT - 1, common.MIN_COMPAT)):
             self.dh.compat()
 
     def test_compat_high(self):
@@ -267,9 +267,9 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
             print(common.MAX_COMPAT + 1, file=f)
 
         with self.assertRaisesRegex(
-                common.CompatError,
-                r"Compat level %i too new \(must be %i or older\)"
-                    % (common.MAX_COMPAT + 1, common.MAX_COMPAT)):
+            common.CompatError,
+            r"Compat level %i too new \(must be %i or older\)"
+                % (common.MAX_COMPAT + 1, common.MAX_COMPAT)):
             self.dh.compat()
 
     def test_compat_missing(self):

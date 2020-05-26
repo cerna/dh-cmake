@@ -16,8 +16,8 @@ def debarch_is(real, alias):
         result = _known_archs[(real, alias)]
     except KeyError:
         result = subprocess.run(
-                ["dpkg-architecture", "-i", alias, "-a", real, "-f"],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            ["dpkg-architecture", "-i", alias, "-a", real, "-f"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         ).returncode == 0
         _known_archs[(real, alias)] = result
     return result

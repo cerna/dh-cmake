@@ -92,8 +92,8 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.dh.read_cpack_metadata()
 
         self.assertEqual(
-                ["Libraries"],
-                self.dh.get_cpack_components("libdh-cmake-test")
+            ["Libraries"],
+            self.dh.get_cpack_components("libdh-cmake-test")
         )
 
         with self.assertRaises(
@@ -104,15 +104,15 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
 
     def test_get_cpack_component_groups(self):
         with open("debian/libdh-cmake-test-extra-32.cpack-component-groups",
-                "w") as f:
+                  "w") as f:
             f.write("InvalidGroup\n")
 
         self.dh.generate([])
         self.dh.read_cpack_metadata()
 
         self.assertEqual(
-                ["Development"],
-                self.dh.get_cpack_component_groups("libdh-cmake-test-dev")
+            ["Development"],
+            self.dh.get_cpack_component_groups("libdh-cmake-test-dev")
         )
 
         with self.assertRaises(
@@ -127,34 +127,34 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.dh.read_cpack_metadata()
 
         self.assertEqual({"Headers", "Namelinks"},
-                self.dh.get_all_cpack_components_for_group("Development"))
+                         self.dh.get_all_cpack_components_for_group("Development"))
 
         self.assertEqual({"Libraries", "Headers", "Namelinks"},
-                self.dh.get_all_cpack_components_for_group("All"))
+                         self.dh.get_all_cpack_components_for_group("All"))
 
     def test_get_all_cpack_components(self):
         self.dh.generate([])
         self.dh.read_cpack_metadata()
 
         self.assertEqual({"Headers", "Namelinks"},
-                self.dh.get_all_cpack_components("libdh-cmake-test-dev"))
+                         self.dh.get_all_cpack_components("libdh-cmake-test-dev"))
 
         self.assertEqual({"Libraries"},
-                self.dh.get_all_cpack_components("libdh-cmake-test"))
+                         self.dh.get_all_cpack_components("libdh-cmake-test"))
 
     def test_get_package_dependencies(self):
         self.dh.generate([])
         self.dh.read_cpack_metadata()
 
         self.assertEqual({"libdh-cmake-test"},
-                self.dh.get_package_dependencies("libdh-cmake-test-dev"))
+                         self.dh.get_package_dependencies("libdh-cmake-test-dev"))
 
     def test_get_package_dependencies_packages(self):
         self.dh.generate(["--package", "libdh-cmake-test-dev"])
         self.dh.read_cpack_metadata()
 
         self.assertEqual(set(),
-                self.dh.get_package_dependencies("libdh-cmake-test-dev"))
+                         self.dh.get_package_dependencies("libdh-cmake-test-dev"))
 
     def test_substvars(self):
         self.dh.generate([])
@@ -162,7 +162,7 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
 
         with open("debian/libdh-cmake-test-dev.substvars", "r") as f:
             self.assertEqual("cpack:Depends=libdh-cmake-test "
-                    "(= ${binary:Version})\n", f.read())
+                             "(= ${binary:Version})\n", f.read())
 
     def test_substvars_packages(self):
         self.dh.generate([])
@@ -184,19 +184,19 @@ class DHCPackTestCase(DebianSourcePackageTestCaseBase):
         self.run_debian_rules("build", "cpack")
         self.run_debian_rules("install", "cpack")
 
-        self.assertFileTreeEqual(self.libraries_files | self.shlibs_files \
+        self.assertFileTreeEqual(self.libraries_files | self.shlibs_files
                                  | self.libdh_cmake_test_files,
                                  "debian/libdh-cmake-test")
 
-        self.assertFileTreeEqual(self.headers_files | self.namelinks_files \
+        self.assertFileTreeEqual(self.headers_files | self.namelinks_files
                                  | self.libdh_cmake_test_dev_files,
                                  "debian/libdh-cmake-test-dev")
 
         self.run_debian_rules("binary", "cpack")
 
         with contextlib.closing(debfile.DebFile(
-                "../libdh-cmake-test-dev_0.1-1_%s.deb" %
-                    arch.dpkg_architecture()["DEB_HOST_ARCH"])) as f:
+            "../libdh-cmake-test-dev_0.1-1_%s.deb" %
+                arch.dpkg_architecture()["DEB_HOST_ARCH"])) as f:
             packages = deb822.Packages(f.debcontrol())
 
             self.assertEqual([
