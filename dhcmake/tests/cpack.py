@@ -5,7 +5,7 @@
 import contextlib
 
 from dhcmake import common, cpack, arch
-from dhcmake_test import *
+from . import *
 
 from debian import debfile, deb822
 

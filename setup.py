@@ -20,6 +20,7 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     packages=["dhcmake"],
+    test_suite="dhcmake.tests",
     install_requires=["python-debian"],
     entry_points={
         "console_scripts": [

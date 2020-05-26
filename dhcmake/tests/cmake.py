@@ -6,7 +6,7 @@ import os.path
 import tempfile
 
 from dhcmake import common, cmake
-from dhcmake_test import *
+from . import *
 
 
 class DHCMakeTestCase(DebianSourcePackageTestCaseBase):

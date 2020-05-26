@@ -5,14 +5,13 @@
 import os.path
 
 from dhcmake import common, deb822
-from dhcmake_test import KWTestCaseBase
+from . import KWTestCaseBase
 
 
 class Deb822TestCase(KWTestCaseBase):
     def test_control(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
-        root_dir = os.path.dirname(test_dir)
-        test_data_dir = os.path.join(root_dir, "test_data")
+        test_data_dir = os.path.join(test_dir, "data")
 
         with open(os.path.join(test_data_dir, "debian_pkg/debian/control"), \
                 "r") as f:
@@ -36,12 +35,12 @@ class Deb822TestCase(KWTestCaseBase):
 
         package = packages[3]
         self.assertEqual("libdh-cmake-test-extra-32", package["package"])
-        self.assertEqual(["mips"], package.architecture)
+        self.assertEqual(["armhf"], package.architecture)
 
         package = packages[4]
         self.assertEqual("libdh-cmake-test-extra-64", package["package"])
-        self.assertEqual(["mips64"], package.architecture)
+        self.assertEqual(["arm64"], package.architecture)
 
         package = packages[5]
         self.assertEqual("libdh-cmake-test-extra-both", package["package"])
-        self.assertEqual(["mips", "mips64"], package.architecture)
+        self.assertEqual(["armhf", "arm64"], package.architecture)

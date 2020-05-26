@@ -4,12 +4,13 @@
 
 import http.server
 import re
+import subprocess
 import threading
 import urllib.parse
 import xml.etree.ElementTree
 
 from dhcmake import common, ctest
-from dhcmake_test import *
+from . import *
 
 
 class PushEnvironmentVariable:
@@ -100,7 +101,7 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         except KeyError:
             pass  # No variable, no problem
 
-        self.cdash_server = MockCDashServer(("127.0.0.1", 47806))
+        self.cdash_server = MockCDashServer(("localhost", 47806))
         self.cdash_server_thread = \
             threading.Thread(target=self.cdash_server.serve_forever)
         self.cdash_server_thread.daemon = True
@@ -242,9 +243,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertEqual("GIT", update_type.text)
             revision = self.get_single_element(tree.findall(
                 "Revision"))
-            # This SHA-1 is deterministic, so we can hard-code it
-            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
-                             revision.text)
+            self.assertEqual(
+                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                revision.text)
 
     def test_update_experimental_modified(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
@@ -279,9 +280,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertEqual("GIT", update_type.text)
             revision = self.get_single_element(tree.findall(
                 "Revision"))
-            # This SHA-1 is deterministic, so we can hard-code it
-            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
-                             revision.text)
+            self.assertEqual(
+                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                revision.text)
 
     def test_update_experimental_submit(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
@@ -315,9 +316,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertEqual("GIT", update_type.text)
             revision = self.get_single_element(tree.findall(
                 "Revision"))
-            # This SHA-1 is deterministic, so we can hard-code it
-            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
-                             revision.text)
+            self.assertEqual(
+                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                revision.text)
 
             self.assertFilesSubmittedEqual({"Update"})
 
@@ -353,9 +354,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertEqual("GIT", update_type.text)
             revision = self.get_single_element(tree.findall(
                 "Revision"))
-            # This SHA-1 is deterministic, so we can hard-code it
-            self.assertEqual("da2147c4861e06b151732b1363a661df590106d7",
-                             revision.text)
+            self.assertEqual(
+                subprocess.check_output(["git", "show", "--quiet", "--format=%H"]).rstrip().decode("utf-8"),
+                revision.text)
 
             self.assertFilesSubmittedEqual({})
 
@@ -601,8 +602,6 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileNotExists(os.path.join("debian/.ctest/Testing/TAG"))
         self.assertFileExists(os.path.join(self.dh.get_build_directory(),
                                            "CMakeCache.txt"))
-        self.assertFileNotExists(os.path.join(self.dh.get_build_directory(),
-                                              "libdh-cmake-test.so"))
 
     def test_build_experimental(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",

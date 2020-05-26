@@ -109,7 +109,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
     @classmethod
     def setUpClass(cls):
         test_dir = os.path.dirname(os.path.abspath(__file__))
-        root_dir = os.path.dirname(test_dir)
+        root_dir = os.path.dirname(os.path.dirname(test_dir))
         perl5_dir = os.path.join(root_dir, "perl5")
 
         cls.scripts_install_dir = tempfile.TemporaryDirectory()
@@ -133,8 +133,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         self.dh = self.DHClass()
 
         test_dir = os.path.dirname(os.path.abspath(__file__))
-        root_dir = os.path.dirname(test_dir)
-        test_data_dir = os.path.join(root_dir, "test_data")
+        test_data_dir = os.path.join(test_dir, "data")
         debian_pkg_dir = os.path.join(test_data_dir, "debian_pkg")
 
         self.tmp_dir = tempfile.TemporaryDirectory()

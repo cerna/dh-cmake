@@ -5,7 +5,7 @@
 from unittest import skip
 
 from dhcmake import common, arch
-from dhcmake_test import *
+from . import *
 
 
 class DHCommonTestCase(DebianSourcePackageTestCaseBase):
@@ -14,7 +14,7 @@ class DHCommonTestCase(DebianSourcePackageTestCaseBase):
     def setUp(self):
         super().setUp()
         self.deb_host_arch_old = arch.dpkg_architecture()["DEB_HOST_ARCH"]
-        arch.dpkg_architecture()["DEB_HOST_ARCH"] = "mips"
+        arch.dpkg_architecture()["DEB_HOST_ARCH"] = "armhf"
 
     def tearDown(self):
         arch.dpkg_architecture()["DEB_HOST_ARCH"] = self.deb_host_arch_old
