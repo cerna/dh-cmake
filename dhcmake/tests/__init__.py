@@ -110,15 +110,16 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
     def setUpClass(cls):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(os.path.dirname(test_dir))
-        perl5_dir = os.path.join(root_dir, "perl5")
 
-        cls.scripts_install_dir = tempfile.TemporaryDirectory()
+        cls.install_dir = tempfile.TemporaryDirectory()
 
         cls.run_cmd([os.path.join(root_dir, "setup.py"), "install_scripts",
-                     "--install-dir=" + cls.scripts_install_dir.name])
+                     "--install-dir=" + os.path.join(cls.install_dir.name, "bin")])
+        cls.run_cmd([os.path.join(root_dir, "setup.py"), "install_data",
+                     "--install-dir=" + cls.install_dir.name])
 
-        cls.old_path = cls.push_path("PATH", cls.scripts_install_dir.name)
-        cls.old_perl5lib = cls.push_path("PERL5LIB", perl5_dir)
+        cls.old_path = cls.push_path("PATH", os.path.join(cls.install_dir.name, "bin"))
+        cls.old_perl5lib = cls.push_path("PERL5LIB", os.path.join(cls.install_dir.name, "share/perl5"))
         cls.old_pythonpath = cls.push_path("PYTHONPATH", root_dir)
 
     @classmethod
@@ -127,7 +128,7 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
         cls.pop_path("PERL5LIB", cls.old_perl5lib)
         cls.pop_path("PATH", cls.old_path)
 
-        cls.scripts_install_dir.cleanup()
+        cls.install_dir.cleanup()
 
     def setUp(self):
         self.dh = self.DHClass()
