@@ -147,6 +147,20 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             with self.assertRaisesRegex(ValueError, "Unclosed backslash"):
                 ctest.get_deb_ctest_option("opt1")
 
+    def test_clean(self):
+        os.makedirs("debian/.ctest/Testing")
+        with open("debian/.ctest/Testing/TAG", "w") as f:
+            f.write("")
+        self.dh.clean([])
+        self.assertFileNotExists("debian/.ctest")
+
+    def test_clean_dir(self):
+        os.makedirs("debian/ctest/Testing")
+        with open("debian/ctest/Testing/TAG", "w") as f:
+            f.write("")
+        self.dh.clean(["--ctest-testing-dir", "debian/ctest"])
+        self.assertFileNotExists("debian/.ctest")
+
     def test_start_none(self):
         self.assertFileNotExists("debian/.ctest/Testing/TAG")
         self.dh.start([])
@@ -927,6 +941,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
         self.assertFileExists("debian/build/CMakeCache.txt")
         self.assertFilesSubmittedEqual(set())
 
+        self.run_debian_rules("clean", "ctest")
+        self.assertFileNotExists("debian/.ctest")
+
     def test_run_debian_rules_experimental(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental"):
@@ -936,6 +953,9 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertFileExists("debian/build/CMakeCache.txt")
             self.assertFilesSubmittedEqual(set())
 
+            self.run_debian_rules("clean", "ctest")
+            self.assertFileNotExists("debian/.ctest")
+
     def test_run_debian_rules_experimental_submit(self):
         with PushEnvironmentVariable("DEB_CTEST_OPTIONS",
                                      "model=Experimental submit"):
@@ -944,3 +964,6 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
             self.assertFileExists("debian/.ctest/Testing/TAG")
             self.assertFileExists("debian/build/CMakeCache.txt")
             self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+
+            self.run_debian_rules("clean", "ctest")
+            self.assertFileNotExists("debian/.ctest")

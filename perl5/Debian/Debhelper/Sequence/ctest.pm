@@ -18,4 +18,6 @@ remove_command("dh_auto_test");
 insert_before("dh_ctest_configure", "dh_ctest_start");
 insert_after("dh_ctest_start", "dh_ctest_update");
 
+insert_before("dh_clean", "dh_ctest_clean");
+
 1;

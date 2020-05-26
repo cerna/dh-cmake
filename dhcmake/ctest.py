@@ -147,6 +147,11 @@ class DHCTest(common.DHCommon):
             self.do_cmd(args)
             return True
 
+    @common.DHEntryPoint("dh_ctest_clean")
+    def clean(self, args=None):
+        self.parse_args(args)
+        self.do_cmd(["dh_clean", self.options.ctest_testing_dir + "/"])
+
     @common.DHEntryPoint("dh_ctest_start")
     def start(self, args=None):
         self.parse_args(args)
@@ -186,6 +191,11 @@ class DHCTest(common.DHCommon):
         self.parse_args(args, make_arg_parser=self.submit_make_arg_parser)
         if get_deb_ctest_option("submit"):
             self.do_ctest_step("submit")
+
+
+def clean():
+    dhctest = DHCTest()
+    dhctest.clean()
 
 
 def start():

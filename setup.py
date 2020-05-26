@@ -25,6 +25,7 @@ setup(
     entry_points={
         "console_scripts": [
             "dh_cmake_install=dhcmake.cmake:install",
+            "dh_ctest_clean=dhcmake.ctest:clean",
             "dh_ctest_start=dhcmake.ctest:start",
             "dh_ctest_update=dhcmake.ctest:update",
             "dh_ctest_configure=dhcmake.ctest:configure",
