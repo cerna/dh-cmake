@@ -183,12 +183,23 @@ class DHCTest(common.DHCommon):
     def submit_make_arg_parser(self, parser):
         super().make_arg_parser(parser)
 
+        parser.add_argument(
+            "--ctest-testing-dir", action="store", default="debian/.ctest",
+            help="Directory in which to store CTest Testing/ directory")
+        parser.add_argument(
+            "--ctest-build", action="store",
+            help="Name of the CTest build")
+        parser.add_argument(
+            "--ctest-build-suffix", action="store", default="",
+            help="Suffix to add to CTest build")
         parser.add_argument("--parts", action="store", nargs="*",
                             help="Parts to submit to CDash")
 
     @common.DHEntryPoint("dh_ctest_submit")
     def submit(self, args=None):
         self.parse_args(args, make_arg_parser=self.submit_make_arg_parser)
+        self.options.no_submit = False
+        self.options.extra_args = []
         if get_deb_ctest_option("submit"):
             self.do_ctest_step("submit")
 

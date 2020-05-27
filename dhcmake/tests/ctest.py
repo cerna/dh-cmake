@@ -971,7 +971,8 @@ class DHCTestTestCase(DebianSourcePackageTestCaseBase):
 
             self.assertFileExists("debian/.ctest/Testing/TAG")
             self.assertFileExists("debian/build/CMakeCache.txt")
-            self.assertFilesSubmittedEqual({"Configure", "Build", "Test"})
+            self.assertFilesSubmittedEqual(
+                {"Configure", "Build", "Test", "Done"})
 
             self.run_debian_rules("clean", "ctest")
             self.assertFileNotExists("debian/.ctest")

@@ -19,6 +19,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Added track and catchfailed options to DEB_CTEST_OPTIONS.
   * Added dh_ctest_update step.
   * Added dh_ctest_clean step.
+  * Default ctest sequence now runs dh_ctest_submit at the end.
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 
