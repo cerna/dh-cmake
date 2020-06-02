@@ -1,5 +1,6 @@
 dh-cmake (0.4~) UNRELEASED; urgency=low
 
+  [ Kyle Edwards ]
   * Added examples.
   * Changed CMake installation to use cmake --install instead of
     cmake_install.cmake script.
@@ -20,6 +21,9 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Added dh_ctest_update step.
   * Added dh_ctest_clean step.
   * Default ctest sequence now runs dh_ctest_submit at the end.
+
+  [ Alastair McKinstry ]
+  * Move to debhelper-compat (= 12)
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 

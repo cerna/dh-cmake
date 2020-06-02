@@ -6,7 +6,7 @@ Uploaders:
     Kyle Edwards <kyle.edwards@kitware.com>,
     Kitware Robot <kwrobot@kitware.com>
 Build-Depends:
-    debhelper (>=11),
+    debhelper-compat (=12),
     dh-python,
     python3-all,
     python3-setuptools,
