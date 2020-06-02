@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Kitware Debian Maintainers <debian@kitware.com>
 Uploaders:
     Kyle Edwards <kyle.edwards@kitware.com>,
-    Kitware Robot <kwrobot@kitware.com>
+    Kitware Robot <kwrobot@kitware.com>,
+    Alastair McKinstry <mckinstry@debian.org>
 Build-Depends:
     debhelper-compat (=12),
     dh-python,

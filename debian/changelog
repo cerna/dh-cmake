@@ -23,6 +23,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Default ctest sequence now runs dh_ctest_submit at the end.
 
   [ Alastair McKinstry ]
+  * Add myself as uploader (sponsor)
   * Move to debhelper-compat (= 12)
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
