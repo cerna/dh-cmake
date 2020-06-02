@@ -8,7 +8,7 @@ import os.path
 from unittest import TestCase
 
 
-class AutoPEP8TestCase(TestCase):
+class SourceCheckTestCase(TestCase):
     def foreach_py(self, func):
         test_dir = os.path.dirname(__file__)
         root_dir = os.path.dirname(os.path.dirname(test_dir))
