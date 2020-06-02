@@ -6,6 +6,7 @@ import errno
 import os.path
 import shutil
 import subprocess
+import sys
 import tempfile
 from unittest import TestCase
 
@@ -36,6 +37,22 @@ class VolatileNamedTemporaryFile:
 
 
 class KWTestCaseBase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dh_verbose = os.environ.get("DH_VERBOSE", "") == "1"
+        cls.stdout = sys.stdout
+        cls.stderr = sys.stderr
+
+        if not cls.dh_verbose:
+            cls.stdout = open(os.devnull, "w")
+            cls.stderr = open(os.devnull, "w")
+
+    @classmethod
+    def tearDownClass(cls):
+        if not cls.dh_verbose:
+            cls.stdout.close()
+            cls.stderr.close()
+
     def assertFileExists(self, path):
         self.assertTrue(os.path.exists(
             path), "File '{0}' does not exist".format(path))
@@ -80,7 +97,8 @@ class KWTestCaseBase(TestCase):
 
     @classmethod
     def run_cmd(cls, args, cwd=None, env=None):
-        subprocess.run(args, cwd=cwd, env=env, check=True)
+        subprocess.run(args, cwd=cwd, env=env, check=True,
+                       stdout=cls.stdout, stderr=cls.stderr)
 
 
 class DebianSourcePackageTestCaseBase(KWTestCaseBase):
@@ -107,6 +125,8 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
+
         test_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(os.path.dirname(test_dir))
 
@@ -131,8 +151,12 @@ class DebianSourcePackageTestCaseBase(KWTestCaseBase):
 
         cls.install_dir.cleanup()
 
+        super().tearDownClass()
+
     def setUp(self):
         self.dh = self.DHClass()
+        self.dh.stdout = self.stdout
+        self.dh.stderr = self.stderr
 
         test_dir = os.path.dirname(os.path.abspath(__file__))
         test_data_dir = os.path.join(test_dir, "data")
