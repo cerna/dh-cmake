@@ -26,6 +26,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Add myself as uploader (sponsor)
   * Move to debhelper-compat (= 12)
   * Use dh-sequence-python3 rather than --with python3
+  * Fix python issues (make pyflakes3 clean)
 
  -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
 

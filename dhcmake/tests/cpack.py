@@ -3,9 +3,9 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import contextlib
-
-from dhcmake import common, cpack, arch
-from . import *
+import os
+from dhcmake import cpack, arch
+from . import DebianSourcePackageTestCaseBase, KWTestCaseBase
 
 from debian import debfile, deb822
 

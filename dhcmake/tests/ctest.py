@@ -8,9 +8,10 @@ import subprocess
 import threading
 import urllib.parse
 import xml.etree.ElementTree
+import os
 
-from dhcmake import common, ctest
-from . import *
+from dhcmake import ctest
+from . import DebianSourcePackageTestCaseBase, KWTestCaseBase
 
 
 class PushEnvironmentVariable:

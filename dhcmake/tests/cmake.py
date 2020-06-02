@@ -3,10 +3,9 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 import os.path
-import tempfile
 
 from dhcmake import common, cmake
-from . import *
+from . import KWTestCaseBase, DebianSourcePackageTestCaseBase
 
 
 class DHCMakeTestCase(DebianSourcePackageTestCaseBase):

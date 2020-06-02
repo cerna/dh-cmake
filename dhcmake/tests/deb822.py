@@ -4,7 +4,7 @@
 
 import os.path
 
-from dhcmake import common, deb822
+from dhcmake import deb822
 from . import KWTestCaseBase
 
 

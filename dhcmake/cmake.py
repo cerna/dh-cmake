@@ -2,9 +2,7 @@
 # BSD 3-Clause license. See top-level LICENSE file or
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
-import os.path
 import re
-
 from dhcmake import common
 
 

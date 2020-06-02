@@ -6,7 +6,6 @@ import errno
 import os.path
 import shutil
 import subprocess
-import sys
 import tempfile
 from unittest import TestCase
 

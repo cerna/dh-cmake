@@ -3,7 +3,6 @@
 # https://gitlab.kitware.com/debian/dh-cmake/blob/master/LICENSE for details.
 
 
-import re
 import subprocess
 
 
