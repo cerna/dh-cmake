@@ -1,3 +1,10 @@
+dh-cmake (0.6~) UNRELEASED; urgency=medium
+
+  [ Kyle Edwards ]
+  * Get setup.py version from d/changelog
+
+ -- Kyle Edwards <kyle.edwards@kitware.com>  Mon, 27 Jul 2020 10:43:23 -0400
+
 dh-cmake (0.5) unstable; urgency=medium
 
   [ Alastair McKinstry ]
