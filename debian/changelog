@@ -1,3 +1,10 @@
+dh-cmake (0.5) unstable; urgency=medium
+
+  [ Alastair McKinstry ]
+  * Fix d/copyright to silence lintian warnings
+
+ -- Alastair McKinstry <mckinstry@debian.org>  Wed, 22 Jul 2020 13:29:55 +0100
+
 dh-cmake (0.4) unstable; urgency=low
 
   [ Kyle Edwards ]
