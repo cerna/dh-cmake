@@ -1,4 +1,4 @@
-dh-cmake (0.4~) UNRELEASED; urgency=low
+dh-cmake (0.4) unstable; urgency=low
 
   [ Kyle Edwards ]
   * Added examples.
@@ -28,7 +28,7 @@ dh-cmake (0.4~) UNRELEASED; urgency=low
   * Use dh-sequence-python3 rather than --with python3
   * Fix python issues (make pyflakes3 clean)
 
- -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 12 May 2020 15:25:00 -0400
+ -- Alastair McKinstry <mckinstry@debian.org>  Tue, 09 Jun 2020 08:19:49 +0100
 
 dh-cmake (0.3) unstable; urgency=medium
 
