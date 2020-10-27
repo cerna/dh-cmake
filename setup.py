@@ -62,5 +62,8 @@ setup(
             "sequence/ctest.pm",
             "sequence/cpack.pm",
         ]),
+        ("share/doc/dh-cmake", [
+            "README.md",
+        ]),
     ],
 )
