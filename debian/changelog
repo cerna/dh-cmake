@@ -8,7 +8,7 @@ dh-cmake (0.6.1~) UNRELEASED; urgency=medium
 dh-cmake (0.6) unstable; urgency=medium
 
   [ Kyle Edwards ]
-  * Get setup.py version from d/changelog
+  * Get setup.py version from d/changelog (closes: #973227)
 
  -- Alastair McKinstry <mckinstry@debian.org>  Sun, 06 Sep 2020 15:04:31 +0100
 
