@@ -16,10 +16,12 @@ def get_current_version():
         changelog = debian.changelog.Changelog(f)
     return str(changelog.get_version())
 
+
 def debian_version_to_python_version(version_str):
     if version_str[-1] == "~":
         return version_str[:-1] + ".dev1"
     return version_str
+
 
 setup(
     name="dh-cmake",
