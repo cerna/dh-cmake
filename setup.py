@@ -14,7 +14,7 @@ def get_current_version():
     changelog_file = os.path.join(root_dir, "debian/changelog")
     with open(changelog_file) as f:
         changelog = debian.changelog.Changelog(f)
-    return str(changelog.get_version())
+    return str(changelog.version)
 
 
 def debian_version_to_python_version(version_str):
