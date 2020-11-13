@@ -1,10 +1,10 @@
-dh-cmake (0.6.1~) UNRELEASED; urgency=medium
+dh-cmake (0.6.1) unstable; urgency=medium
 
   [ Kyle Edwards ]
   * Use changelog.version in setup.py (closes: #973227)
   * Install README.md in /usr/share/doc/dh-cmake (closes: #970392)
-
- -- Kyle Edwards <kyle.edwards@kitware.com>  Tue, 27 Oct 2020 15:43:38 -0400
+  
+ -- Alastair McKinstry <mckinstry@debian.org>  Wed, 11 Nov 2020 16:01:35 +0000
 
 dh-cmake (0.6) unstable; urgency=medium
 
