@@ -24,6 +24,7 @@ Rules-Requires-Root: no
 
 Package: dh-cmake
 Architecture: all
+Multi-Arch: foreign
 Depends:
     ${python3:Depends},
     ${misc:Depends},
